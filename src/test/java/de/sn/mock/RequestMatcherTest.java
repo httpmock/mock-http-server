@@ -77,6 +77,16 @@ public class RequestMatcherTest {
 				is(true));
 	}
 
+	@Test
+	public void noMatchContentType() throws Exception {
+		RequestDto configuredRequest = someRequest().contentType(
+				"some/othertype").build();
+		RequestDto incommingRequest = someRequest().contentType("some/type")
+				.build();
+		assertThat(matcher.matches(configuredRequest, incommingRequest),
+				is(false));
+	}
+
 	private RequestBuilder someRequest() {
 		return request().url("some/url");
 	}
