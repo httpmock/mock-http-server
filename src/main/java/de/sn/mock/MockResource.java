@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -30,6 +31,7 @@ import de.sn.mock.dto.MockDto;
 import de.sn.mock.dto.RequestDto;
 import de.sn.mock.dto.ResponseDto;
 
+@Stateless
 @Path("/mock")
 public class MockResource {
 
@@ -78,14 +80,18 @@ public class MockResource {
 			@Context HttpHeaders headers, @Context Request request) {
 
 		MockInstance mock = mockService.findMock(id);
-		ResponseDto response = findResponse(
-				mock,
-				request().method(request.getMethod()).url(url)
-						.contentType(headers.getMediaType()).build());
+		ResponseDto response = findResponse(mock,
+				toRequestDto(url, headers, request));
 		if (response == null) {
 			return Response.noContent().build();
 		}
 		return toResponse(response);
+	}
+
+	private RequestDto toRequestDto(String url, HttpHeaders headers,
+			Request request) {
+		return request().method(request.getMethod()).url(url)
+				.contentType(headers.getMediaType()).build();
 	}
 
 	private Response toResponse(ResponseDto response) {

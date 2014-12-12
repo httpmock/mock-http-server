@@ -48,6 +48,22 @@ public class RequestMatcherTest {
 	}
 
 	@Test
+	public void matchNormalizedConfiguredUrl() throws Exception {
+		RequestDto configuredRequest = request().url("url2").build();
+		RequestDto incommingRequest = request().url("/url2").build();
+		assertThat(matcher.matches(configuredRequest, incommingRequest),
+				is(true));
+	}
+
+	@Test
+	public void matchNormalizedIncommingUrl() throws Exception {
+		RequestDto configuredRequest = request().url("/url2").build();
+		RequestDto incommingRequest = request().url("url2").build();
+		assertThat(matcher.matches(configuredRequest, incommingRequest),
+				is(true));
+	}
+
+	@Test
 	public void matchEqualContentType() throws Exception {
 		RequestDto configuredRequest = someRequest().contentType("some/type")
 				.build();

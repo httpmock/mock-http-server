@@ -23,8 +23,7 @@ public class MockService {
 	}
 
 	private MockInstance createMockInstance() {
-		MockInstance mockInstance = new MockInstance(randomId());
-		return mockInstance;
+		return new MockInstance(randomId());
 	}
 
 	private String randomId() {

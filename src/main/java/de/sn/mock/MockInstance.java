@@ -17,7 +17,7 @@ public class MockInstance {
 	}
 
 	public String getId() {
-		return id.toString();
+		return id;
 	}
 
 	public List<ConfigurationDto> getConfigurations() {
