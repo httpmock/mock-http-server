@@ -1,6 +1,6 @@
 package de.sn.mock;
 
-import static de.sn.mock.dto.RequestBuilder.request;
+import static de.sn.mock.builder.RequestBuilder.request;
 
 import java.util.List;
 import java.util.Set;
@@ -90,8 +90,10 @@ public class MockResource {
 
 	private RequestDto toRequestDto(String url, HttpHeaders headers,
 			Request request) {
+		MediaType mediaType = headers.getMediaType();
+		String contentType = mediaType == null ? null : mediaType.toString();
 		return request().method(request.getMethod()).url(url)
-				.contentType(headers.getMediaType()).build();
+				.contentType(contentType).build();
 	}
 
 	private Response toResponse(ResponseDto response) {

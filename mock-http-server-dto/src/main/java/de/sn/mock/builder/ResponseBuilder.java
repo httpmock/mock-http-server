@@ -1,9 +1,11 @@
-package de.sn.mock.dto;
+package de.sn.mock.builder;
 
 import static de.sn.mock.util.CollectionUtil.emptyMap;
 import static org.apache.commons.codec.binary.Base64.encodeBase64String;
 
 import java.util.Map;
+
+import de.sn.mock.dto.ResponseDto;
 
 public class ResponseBuilder {
 	private String payload;

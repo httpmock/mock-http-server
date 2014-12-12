@@ -1,6 +1,6 @@
-package de.sn.mock.dto;
+package de.sn.mock.builder;
 
-import javax.ws.rs.core.MediaType;
+import de.sn.mock.dto.RequestDto;
 
 public class RequestBuilder {
 
@@ -30,14 +30,6 @@ public class RequestBuilder {
 
 	public RequestBuilder contentType(String contentType) {
 		this.contentType = contentType;
-		return this;
-	}
-
-	public RequestBuilder contentType(MediaType mediaType) {
-		if (mediaType == null)
-			this.contentType = null;
-		else
-			this.contentType = mediaType.toString();
 		return this;
 	}
 

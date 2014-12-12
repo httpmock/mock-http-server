@@ -1,13 +1,13 @@
 package de.sn.mock;
 
-import static de.sn.mock.dto.RequestBuilder.request;
+import static de.sn.mock.builder.RequestBuilder.request;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import de.sn.mock.dto.RequestBuilder;
+import de.sn.mock.builder.RequestBuilder;
 import de.sn.mock.dto.RequestDto;
 
 public class RequestMatcherTest {

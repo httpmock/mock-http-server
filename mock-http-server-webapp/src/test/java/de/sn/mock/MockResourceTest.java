@@ -1,7 +1,7 @@
 package de.sn.mock;
 
-import static de.sn.mock.dto.RequestBuilder.request;
-import static de.sn.mock.dto.ResponseBuilder.response;
+import static de.sn.mock.builder.RequestBuilder.request;
+import static de.sn.mock.builder.ResponseBuilder.response;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
