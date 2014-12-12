@@ -27,6 +27,7 @@ import de.sn.mock.dto.ConfigurationDto;
 import de.sn.mock.dto.MockDto;
 import de.sn.mock.dto.RequestDto;
 import de.sn.mock.dto.ResponseDto;
+import de.sn.mock.dto.VerifyResponseDto;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockResourceTest {
@@ -103,7 +104,7 @@ public class MockResourceTest {
 		HttpHeaders headers = mock(HttpHeaders.class);
 		mockContentTypeHeaders(headers, requestDto);
 
-		return mockResource.replay(ID, requestDto.getUrl(), null, headers,
+		return mockResource.replayPost(ID, requestDto.getUrl(), null, headers,
 				request);
 	}
 
@@ -146,6 +147,22 @@ public class MockResourceTest {
 	}
 
 	@Test
+	public void replayWithContentTypeWithCharset() throws Exception {
+		RequestDto requestDto = request().get(URL)
+				.contentType("application/json").build();
+		RequestDto incommingRequest = request().get(URL)
+				.contentType("application/json;charset=ISO-8859-1").build();
+
+		ResponseDto responseDto = response().build();
+		configureRequestAndResponse(requestDto, responseDto);
+
+		Response replayedResponse = replayUrl(incommingRequest);
+
+		assertThat(replayedResponse, is(notNullValue()));
+		assertThat(replayedResponse.getStatus(), is(200));
+	}
+
+	@Test
 	public void replayWithStatusCode() throws Exception {
 		RequestDto requestDto = someRequest();
 		ResponseDto responseDto = response().statusCode(123).build();
@@ -182,6 +199,18 @@ public class MockResourceTest {
 
 		assertThat(replayedResponse, is(notNullValue()));
 		assertThat(replayedResponse.getStatus(), is(STATUS_NOT_CONFIGURED));
+	}
+
+	@Test
+	public void verifyNoRequest() throws Exception {
+		RequestDto requestDto = someRequest();
+		Response response = mockResource.verify(ID, requestDto);
+		VerifyResponseDto verifyResponse = getVerifyResponse(response);
+		assertThat(verifyResponse.getTimes(), is(0));
+	}
+
+	private VerifyResponseDto getVerifyResponse(Response response) {
+		return (VerifyResponseDto) response.getEntity();
 	}
 
 	private RequestDto someRequest() {

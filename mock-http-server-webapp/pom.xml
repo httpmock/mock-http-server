@@ -5,7 +5,6 @@
 	<artifactId>mock-http-server-webapp</artifactId>
 	<packaging>war</packaging>
 
-	<name>mock-http-server</name>
 	<url>http://maven.apache.org</url>
 
 	<parent>
@@ -16,6 +15,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<tomee-plugin.script>java</tomee-plugin.script>
+		<tomee-plugin.ajp>9009</tomee-plugin.ajp>
+		<tomee-plugin.http>9090</tomee-plugin.http>
+		<tomee-plugin.shutdown>9099</tomee-plugin.shutdown>
 	</properties>
 
 	<dependencies>
@@ -24,7 +27,12 @@
 			<artifactId>mock-http-server-dto</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-	
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
@@ -47,12 +55,21 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-jaxrs</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-xc</artifactId>
+			<version>1.9.13</version>
 		</dependency>
 	</dependencies>
 
@@ -73,6 +90,49 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.openejb.maven</groupId>
+				<artifactId>tomee-maven-plugin</artifactId>
+				<version>1.7.1</version>
+				<executions>
+					<execution>
+						<id>build standalone tomee</id>
+						<phase>install</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<simpleLog>true</simpleLog>
+					<tomeeVersion>1.7.1</tomeeVersion>
+					<tomeeClassifier>plus</tomeeClassifier>
+					<webapps>
+						<webapp>${project.groupId}:${project.artifactId}:${project.version}?name=mockserver</webapp>
+					</webapps>
+					<args>-Xmx512m -XX:PermSize=256m</args>
 				</configuration>
 			</plugin>
 		</plugins>

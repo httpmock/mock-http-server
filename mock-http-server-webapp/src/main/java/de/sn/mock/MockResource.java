@@ -30,6 +30,7 @@ import de.sn.mock.dto.ConfigurationDto;
 import de.sn.mock.dto.MockDto;
 import de.sn.mock.dto.RequestDto;
 import de.sn.mock.dto.ResponseDto;
+import de.sn.mock.dto.VerifyResponseDto;
 
 @Stateless
 @Path("/mock")
@@ -70,15 +71,47 @@ public class MockResource {
 	}
 
 	@POST
-	@GET
-	@PUT
-	@DELETE
-	@HEAD
-	@Path("/{id}/request/{url .*}")
-	public Response replay(@PathParam("id") String id,
+	@Path("/{id}/request/{url : .*}")
+	public Response replayPost(@PathParam("id") String id,
 			@PathParam("url") String url, @Context UriInfo urlInfo,
 			@Context HttpHeaders headers, @Context Request request) {
+		return replay(id, url, headers, request);
+	}
 
+	@GET
+	@Path("/{id}/request/{url : .*}")
+	public Response replayGet(@PathParam("id") String id,
+			@PathParam("url") String url, @Context UriInfo urlInfo,
+			@Context HttpHeaders headers, @Context Request request) {
+		return replay(id, url, headers, request);
+	}
+
+	@PUT
+	@Path("/{id}/request/{url : .*}")
+	public Response replayPut(@PathParam("id") String id,
+			@PathParam("url") String url, @Context UriInfo urlInfo,
+			@Context HttpHeaders headers, @Context Request request) {
+		return replay(id, url, headers, request);
+	}
+
+	@DELETE
+	@Path("/{id}/request/{url : .*}")
+	public Response replayDelete(@PathParam("id") String id,
+			@PathParam("url") String url, @Context UriInfo urlInfo,
+			@Context HttpHeaders headers, @Context Request request) {
+		return replay(id, url, headers, request);
+	}
+
+	@HEAD
+	@Path("/{id}/request/{url : .*}")
+	public Response replayHead(@PathParam("id") String id,
+			@PathParam("url") String url, @Context UriInfo urlInfo,
+			@Context HttpHeaders headers, @Context Request request) {
+		return replay(id, url, headers, request);
+	}
+
+	private Response replay(String id, String url, HttpHeaders headers,
+			Request request) {
 		MockInstance mock = mockService.findMock(id);
 		ResponseDto response = findResponse(mock,
 				toRequestDto(url, headers, request));
@@ -92,6 +125,8 @@ public class MockResource {
 			Request request) {
 		MediaType mediaType = headers.getMediaType();
 		String contentType = mediaType == null ? null : mediaType.toString();
+		if (contentType != null && contentType.matches(".+[;].+"))
+			contentType = contentType.split(";")[0];
 		return request().method(request.getMethod()).url(url)
 				.contentType(contentType).build();
 	}
@@ -125,5 +160,13 @@ public class MockResource {
 			}
 		}
 		return null;
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{id}/verify")
+	public Response verify(@PathParam("id") String id, RequestDto request) {
+		return Response.ok(new VerifyResponseDto()).build();
 	}
 }
