@@ -33,4 +33,8 @@ public class MockService {
 	public MockInstance findMock(String mockId) {
 		return mocks.get(mockId);
 	}
+
+	public void delete(String id) {
+		mocks.remove(id);
+	}
 }

@@ -62,6 +62,11 @@ public class MockResourceTest {
 
 		verify(mockService).create();
 		assertThat(response.getEntity(), is(instanceOf(MockDto.class)));
+		MockDto mockDto = (MockDto) response.getEntity();
+		assertThat(mockDto.getUrl(), is(notNullValue()));
+		assertThat(mockDto.getConfigurationUrl(), is(notNullValue()));
+		assertThat(mockDto.getRequestUrl(), is(notNullValue()));
+		assertThat(mockDto.getVerifyUrl(), is(notNullValue()));
 	}
 
 	@Test
@@ -86,6 +91,16 @@ public class MockResourceTest {
 		assertThat(replayedResponse, is(notNullValue()));
 		assertThat(replayedResponse.getEntity(),
 				is((Object) responseDto.getPayload()));
+	}
+
+	@Test
+	public void replayNotExistingMock() throws Exception {
+		RequestDto requestDto = someRequest();
+
+		Response replayedResponse = replayUrl(requestDto);
+
+		assertThat(replayedResponse, is(notNullValue()));
+		assertThat(replayedResponse.getStatus(), is(204));
 	}
 
 	@Test
@@ -147,7 +162,23 @@ public class MockResourceTest {
 	}
 
 	@Test
-	public void replayWithContentTypeWithCharset() throws Exception {
+	public void replayRequestWithContentType() throws Exception {
+		RequestDto requestDto = request().get(URL)
+				.contentType("application/json").build();
+		RequestDto incommingRequest = request().get(URL)
+				.contentType("application/json").build();
+
+		ResponseDto responseDto = response().build();
+		configureRequestAndResponse(requestDto, responseDto);
+
+		Response replayedResponse = replayUrl(incommingRequest);
+
+		assertThat(replayedResponse, is(notNullValue()));
+		assertThat(replayedResponse.getStatus(), is(200));
+	}
+
+	@Test
+	public void replayRequestWithContentTypeWithCharset() throws Exception {
 		RequestDto requestDto = request().get(URL)
 				.contentType("application/json").build();
 		RequestDto incommingRequest = request().get(URL)
@@ -203,10 +234,60 @@ public class MockResourceTest {
 
 	@Test
 	public void verifyNoRequest() throws Exception {
+		createFakeMock();
 		RequestDto requestDto = someRequest();
 		Response response = mockResource.verify(ID, requestDto);
 		VerifyResponseDto verifyResponse = getVerifyResponse(response);
 		assertThat(verifyResponse.getTimes(), is(0));
+	}
+
+	@Test
+	public void replayCount() throws Exception {
+		RequestDto requestDto = someRequest();
+		ResponseDto responseDto = response().build();
+		MockInstance mock = configureRequestAndResponse(requestDto, responseDto);
+
+		replayUrl(requestDto);
+
+		Response response = mockResource.verify(ID, requestDto);
+		assertThat(mock.getCount(requestDto), is(1));
+		VerifyResponseDto verifyResponse = getVerifyResponse(response);
+		assertThat(verifyResponse.getTimes(), is(1));
+	}
+
+	@Test
+	public void replayGet() throws Exception {
+		RequestDto requestDto = someRequest();
+		ResponseDto responseDto = response().build();
+		configureRequestAndResponse(requestDto, responseDto);
+		when(request.getMethod()).thenReturn(requestDto.getMethod());
+		HttpHeaders headers = mock(HttpHeaders.class);
+		mockContentTypeHeaders(headers, requestDto);
+
+		Response replayPost = mockResource.replayPost(ID, requestDto.getUrl(),
+				null, headers, request);
+		assertEqualResponses(mockResource.replayGet(ID, requestDto.getUrl(),
+				null, headers, request), replayPost);
+		assertEqualResponses(mockResource.replayPut(ID, requestDto.getUrl(),
+				null, headers, request), replayPost);
+		assertEqualResponses(mockResource.replayHead(ID, requestDto.getUrl(),
+				null, headers, request), replayPost);
+		assertEqualResponses(mockResource.replayDelete(ID, requestDto.getUrl(),
+				null, headers, request), replayPost);
+	}
+
+	@Test
+	public void delete() throws Exception {
+		Response response = mockResource.delete(ID);
+		verify(mockService).delete(ID);
+		assertThat(response.getStatus(), is(200));
+	}
+
+	private void assertEqualResponses(Response response,
+			Response expectedResponse) {
+		assertThat(response.getEntity(), is(expectedResponse.getEntity()));
+		assertThat(response.getStatus(), is(expectedResponse.getStatus()));
+		assertThat(response.getHeaders(), is(expectedResponse.getHeaders()));
 	}
 
 	private VerifyResponseDto getVerifyResponse(Response response) {
@@ -217,13 +298,14 @@ public class MockResourceTest {
 		return request().get(URL).build();
 	}
 
-	private void configureRequestAndResponse(RequestDto requestDto,
+	private MockInstance configureRequestAndResponse(RequestDto requestDto,
 			ResponseDto responseDto) {
 		MockInstance mock = createFakeMock();
 		ConfigurationDto configuration = new ConfigurationDto(requestDto,
 				responseDto);
 		mock.addConfiguration(configuration);
 		when(requestMatcher.matches(requestDto, requestDto)).thenReturn(true);
+		return mock;
 	}
 
 	private MockInstance createFakeMock() {

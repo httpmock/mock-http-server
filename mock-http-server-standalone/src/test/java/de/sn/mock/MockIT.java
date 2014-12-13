@@ -48,8 +48,8 @@ public class MockIT {
 	private RequestSpecification given() {
 		RequestSpecification given = RestAssured.given();
 		given.baseUri("http://localhost") //
-				.port(SERVER_PORT) //
-				.basePath("/mockserver");
+		.port(SERVER_PORT) //
+		.basePath("/mockserver");
 		return given;
 	}
 
@@ -68,8 +68,8 @@ public class MockIT {
 				someRequest(METHOD_POST), someResponse());
 
 		given().contentType("application/json").body(toJson(mockConfiguration))
-				.post(mockDefinition.getConfigurationUrl()) //
-				.then().statusCode(is(200));
+		.post(mockDefinition.getConfigurationUrl()) //
+		.then().statusCode(is(200));
 	}
 
 	private String toJson(Object object) {
@@ -85,7 +85,7 @@ public class MockIT {
 		ConfigurationDto mockConfiguration = someMockConfiguration(request,
 				response);
 
-		prepareConfiguration(mock, mockConfiguration);
+		configureRequestAndResponse(mock, mockConfiguration);
 
 		validateResponse(doRequest(mock, request), response);
 	}
@@ -99,7 +99,7 @@ public class MockIT {
 
 		ConfigurationDto mockConfiguration = someMockConfiguration(
 				requestWithPattern, response);
-		prepareConfiguration(mock, mockConfiguration);
+		configureRequestAndResponse(mock, mockConfiguration);
 
 		RequestDto request = someRequest(METHOD_POST);
 		request.setUrl("/some/url");
@@ -114,7 +114,7 @@ public class MockIT {
 		ConfigurationDto mockConfiguration = someMockConfiguration(request,
 				response);
 
-		prepareConfiguration(mock, mockConfiguration);
+		configureRequestAndResponse(mock, mockConfiguration);
 
 		validateResponse(doRequest(mock, request), response);
 		validateResponse(doRequest(mock, request), response);
@@ -129,7 +129,7 @@ public class MockIT {
 		ConfigurationDto mockConfiguration = someMockConfiguration(request,
 				response);
 
-		prepareConfiguration(mock, mockConfiguration);
+		configureRequestAndResponse(mock, mockConfiguration);
 
 		validateResponse(doRequest(mock, request), response);
 	}
@@ -143,7 +143,7 @@ public class MockIT {
 		ConfigurationDto mockConfiguration = someMockConfiguration(request,
 				response);
 
-		prepareConfiguration(mock, mockConfiguration);
+		configureRequestAndResponse(mock, mockConfiguration);
 
 		validateResponse(doRequest(mock, request), response);
 	}
@@ -163,7 +163,7 @@ public class MockIT {
 		ConfigurationDto mockConfiguration = someMockConfiguration(request,
 				response);
 
-		prepareConfiguration(mock, mockConfiguration);
+		configureRequestAndResponse(mock, mockConfiguration);
 
 		validateResponse(doRequest(mock, request), response);
 	}
@@ -186,7 +186,7 @@ public class MockIT {
 		ConfigurationDto mockConfiguration = someMockConfiguration(request,
 				response);
 
-		prepareConfiguration(mock, mockConfiguration);
+		configureRequestAndResponse(mock, mockConfiguration);
 
 		validateResponse(doRequest(mock, request), response);
 	}
@@ -212,7 +212,7 @@ public class MockIT {
 		ConfigurationDto mockConfiguration = someMockConfiguration(request,
 				someResponse());
 
-		prepareConfiguration(mock, mockConfiguration);
+		configureRequestAndResponse(mock, mockConfiguration);
 
 		verifyNumberOfCalls(mock, request, 0);
 	}
@@ -223,7 +223,7 @@ public class MockIT {
 		RequestDto request = someRequest(METHOD_GET);
 		ConfigurationDto mockConfiguration = someMockConfiguration(request,
 				someResponse());
-		prepareConfiguration(mock, mockConfiguration);
+		configureRequestAndResponse(mock, mockConfiguration);
 
 		doRequest(mock, request);
 
@@ -238,7 +238,7 @@ public class MockIT {
 		ConfigurationDto mockConfiguration = someMockConfiguration(request,
 				someResponse());
 
-		prepareConfiguration(mock, mockConfiguration);
+		configureRequestAndResponse(mock, mockConfiguration);
 
 		doRequest(mock, request);
 		doRequest(mock, request);
@@ -250,19 +250,19 @@ public class MockIT {
 	private void verifyNumberOfCalls(MockDto mock, RequestDto request,
 			int numberOfCalls) {
 		given().contentType("application/json").body(toJson(request))
-				.post(mock.getVerifyUrl()).then()
-				.body("times", is(numberOfCalls));
+		.post(mock.getVerifyUrl()).then()
+		.body("times", is(numberOfCalls));
 	}
 
 	private void validateResponse(Response response, ResponseDto responseConfig) {
 		response.then()
-				.statusCode(responseConfig.getStatusCode())
-				//
-				.and()
-				.contentType(is(responseConfig.getContentType()))
-				//
-				.and()
-				.body(is(new String(decodeBase64(responseConfig.getPayload()))));
+		.statusCode(responseConfig.getStatusCode())
+		//
+		.and()
+		.contentType(is(responseConfig.getContentType()))
+		//
+		.and()
+		.body(is(new String(decodeBase64(responseConfig.getPayload()))));
 	}
 
 	private Response doRequest(MockDto mockDefinition, RequestDto request) {
@@ -284,12 +284,12 @@ public class MockIT {
 				+ method);
 	}
 
-	private void prepareConfiguration(MockDto mockDefintion,
+	private void configureRequestAndResponse(MockDto mockDefintion,
 			ConfigurationDto mockConfiguration) {
 		Gson gson = new Gson();
 		given().contentType("application/json")
-				.body(gson.toJson(mockConfiguration))
-				.post(mockDefintion.getConfigurationUrl());
+		.body(gson.toJson(mockConfiguration))
+		.post(mockDefintion.getConfigurationUrl());
 	}
 
 	private ConfigurationDto someMockConfiguration(RequestDto request,
@@ -321,5 +321,18 @@ public class MockIT {
 	private MockDto initMock() {
 		return given().contentType("application/json").post("/mock/create")
 				.body().as(MockDto.class);
+	}
+
+	@Test
+	public void deleteMock() {
+		MockDto mock = initMock();
+		RequestDto request = someRequest(METHOD_GET);
+		ConfigurationDto mockConfiguration = someMockConfiguration(request,
+				someResponse());
+		configureRequestAndResponse(mock, mockConfiguration);
+
+		given().delete(mock.getUrl());
+
+		assertThat(doRequest(mock, request).statusCode(), is(204));
 	}
 }

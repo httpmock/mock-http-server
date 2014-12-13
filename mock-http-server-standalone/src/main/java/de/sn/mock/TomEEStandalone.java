@@ -2,6 +2,7 @@ package de.sn.mock;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
 
 import javax.naming.NamingException;
 
@@ -54,6 +55,22 @@ public class TomEEStandalone {
 		this(serverPort, stopPort, new Container());
 	}
 
+	public TomEEStandalone() {
+		this(getRandomPort(), getRandomPort());
+	}
+
+	private static int getRandomPort() {
+		ServerSocket s;
+		try {
+			s = new ServerSocket(0);
+			int port = s.getLocalPort();
+			s.close();
+			return port;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	TomEEStandalone(int serverPort, int stopPort, Container container) {
 		this.serverPort = serverPort;
 		this.stopPort = stopPort;
@@ -63,7 +80,7 @@ public class TomEEStandalone {
 
 	public void deploy(String pathToWar) {
 		try {
-			container.deploy("rgw-mock-broker", new File(pathToWar));
+			container.deploy("mockserver", new File(pathToWar));
 		} catch (OpenEJBException | IOException | NamingException e) {
 			e.printStackTrace();
 		}
@@ -75,11 +92,15 @@ public class TomEEStandalone {
 		config.setHttpPort(serverPort);
 		config.setStopPort(stopPort);
 		config.setDir(new File(new File("target"), "apache-tomee")
-		.getAbsolutePath());
+				.getAbsolutePath());
 		return config;
 	}
 
 	public void stop() throws Exception {
 		container.stop();
+	}
+
+	public int getHttpPort() {
+		return serverPort;
 	}
 }

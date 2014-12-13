@@ -54,6 +54,7 @@ public class MockResource {
 	MockDto createMockDto(MockInstance mockInstance) {
 		MockDto mockDto = new MockDto();
 		String mockId = mockInstance.getId();
+		mockDto.setUrl(String.format("/mock/%s", mockId));
 		mockDto.setConfigurationUrl(String.format("/mock/%s/configure", mockId));
 		mockDto.setRequestUrl(String.format("/mock/%s/request", mockId));
 		mockDto.setVerifyUrl(String.format("/mock/%s/verify", mockId));
@@ -113,22 +114,38 @@ public class MockResource {
 	private Response replay(String id, String url, HttpHeaders headers,
 			Request request) {
 		MockInstance mock = mockService.findMock(id);
-		ResponseDto response = findResponse(mock,
+		if (mock == null)
+			return notFound();
+		ConfigurationDto configuration = findConfiguration(mock,
 				toRequestDto(url, headers, request));
-		if (response == null) {
-			return Response.noContent().build();
-		}
-		return toResponse(response);
+		if (configuration == null)
+			return notFound();
+		mock.count(configuration.getRequest());
+		return toResponse(configuration.getResponse());
+	}
+
+	private Response notFound() {
+		return Response.noContent().build();
 	}
 
 	private RequestDto toRequestDto(String url, HttpHeaders headers,
 			Request request) {
 		MediaType mediaType = headers.getMediaType();
-		String contentType = mediaType == null ? null : mediaType.toString();
-		if (contentType != null && contentType.matches(".+[;].+"))
-			contentType = contentType.split(";")[0];
+		String contentType = getContentType(mediaType);
 		return request().method(request.getMethod()).url(url)
 				.contentType(contentType).build();
+	}
+
+	private String getContentType(MediaType mediaType) {
+		if (mediaType == null)
+			return null;
+		return removeCharset(mediaType.toString());
+	}
+
+	private String removeCharset(String contentType) {
+		if (contentType.matches(".+[;].+"))
+			return contentType.split(";")[0];
+		return contentType;
 	}
 
 	private Response toResponse(ResponseDto response) {
@@ -151,12 +168,13 @@ public class MockResource {
 		return Base64.decodeBase64(payload);
 	}
 
-	private ResponseDto findResponse(MockInstance mock, RequestDto requestDto) {
+	private ConfigurationDto findConfiguration(MockInstance mock,
+			RequestDto requestDto) {
 		List<ConfigurationDto> configurations = mock.getConfigurations();
 		for (ConfigurationDto configurationDto : configurations) {
 			if (requestMatcher.matches(configurationDto.getRequest(),
 					requestDto)) {
-				return configurationDto.getResponse();
+				return configurationDto;
 			}
 		}
 		return null;
@@ -167,6 +185,20 @@ public class MockResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}/verify")
 	public Response verify(@PathParam("id") String id, RequestDto request) {
-		return Response.ok(new VerifyResponseDto()).build();
+		MockInstance mock = mockService.findMock(id);
+		ConfigurationDto configuration = findConfiguration(mock, request);
+
+		VerifyResponseDto verifyResponseDto = new VerifyResponseDto();
+		if (configuration != null)
+			verifyResponseDto
+			.setTimes(mock.getCount(configuration.getRequest()));
+		return Response.ok(verifyResponseDto).build();
+	}
+
+	@DELETE
+	@Path("/{id}")
+	public Response delete(@PathParam("id") String id) {
+		mockService.delete(id);
+		return Response.ok().build();
 	}
 }

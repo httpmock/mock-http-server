@@ -1,9 +1,18 @@
 package de.sn.mock.dto;
 
 public class MockDto {
+	private String url;
 	private String configurationUrl;
 	private String requestUrl;
 	private String verifyUrl;
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 	public String getConfigurationUrl() {
 		return configurationUrl;
