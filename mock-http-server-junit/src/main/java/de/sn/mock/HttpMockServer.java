@@ -2,7 +2,7 @@ package de.sn.mock;
 
 import org.junit.rules.ExternalResource;
 
-public class MockServer extends ExternalResource {
+public class HttpMockServer extends ExternalResource {
 	private TomEEStandalone standalone;
 
 	@Override
