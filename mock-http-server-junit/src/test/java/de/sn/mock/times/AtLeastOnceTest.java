@@ -1,6 +1,7 @@
 package de.sn.mock.times;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
@@ -21,4 +22,8 @@ public class AtLeastOnceTest {
 		assertThat(once.getFailedDescription(), is("at least once"));
 	}
 
+	@Test
+	public void factory() throws Exception {
+		assertThat(AtLeastOnce.atLeastOnce(), is(notNullValue()));
+	}
 }

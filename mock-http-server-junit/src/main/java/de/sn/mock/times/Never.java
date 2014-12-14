@@ -12,7 +12,7 @@ public class Never extends Times {
 		return "never";
 	}
 
-	public static Never once() {
+	public static Never never() {
 		return new Never();
 	}
 

@@ -1,6 +1,7 @@
 package de.sn.mock.times;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
@@ -16,9 +17,14 @@ public class NeverTest {
 	}
 
 	@Test
-	public void descriptoin() throws Exception {
+	public void description() throws Exception {
 		Never never = new Never();
 		assertThat(never.getFailedDescription(), is("never"));
+	}
+
+	@Test
+	public void factory() throws Exception {
+		assertThat(Never.never(), is(notNullValue()));
 	}
 
 }
