@@ -11,12 +11,10 @@ public class ResponseDto {
 	private int statusCode;
 	private String payload;
 	private Map<String, String> headers;
-	private String contentType;
 
 	public ResponseDto() {
 		this.statusCode = 200;
 		this.headers = emptyMap();
-		this.contentType = "text/plain";
 	}
 
 	public int getStatusCode() {
@@ -43,14 +41,6 @@ public class ResponseDto {
 		this.headers = headers;
 	}
 
-	public String getContentType() {
-		return contentType;
-	}
-
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		return EqualsBuilder.reflectionEquals(this, obj);
@@ -59,6 +49,10 @@ public class ResponseDto {
 	@Override
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this);
+	}
+
+	public String getContentType() {
+		return headers.get("Content-Type");
 	}
 
 }

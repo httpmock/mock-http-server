@@ -116,10 +116,12 @@ public class MockResource {
 		MockInstance mock = mockService.findMock(id);
 		if (mock == null)
 			return notFound();
+
 		ConfigurationDto configuration = findConfiguration(mock,
 				toRequestDto(url, headers, request));
 		if (configuration == null)
 			return notFound();
+
 		mock.count(configuration.getRequest());
 		return toResponse(configuration.getResponse());
 	}
@@ -149,10 +151,9 @@ public class MockResource {
 	}
 
 	private Response toResponse(ResponseDto response) {
-		ResponseBuilder replayResponse = Response
-				.status(response.getStatusCode())
-				.entity(decodePayload(response.getPayload()))
-				.header("Content-Type", response.getContentType());
+		ResponseBuilder replayResponse = Response.status(
+				response.getStatusCode()).entity(
+				decodePayload(response.getPayload()));
 		addHeaders(response, replayResponse);
 		return replayResponse.build();
 	}
@@ -191,7 +192,7 @@ public class MockResource {
 		VerifyResponseDto verifyResponseDto = new VerifyResponseDto();
 		if (configuration != null)
 			verifyResponseDto
-			.setTimes(mock.getCount(configuration.getRequest()));
+					.setTimes(mock.getCount(configuration.getRequest()));
 		return Response.ok(verifyResponseDto).build();
 	}
 

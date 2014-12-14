@@ -12,4 +12,8 @@ public class AtLeastOnce extends Times {
 		return "at least once";
 	}
 
+	public static ExcatlyOnce atLeastOnce() {
+		return new ExcatlyOnce();
+	}
+
 }

@@ -12,4 +12,8 @@ public class ExcatlyOnce extends Times {
 		return "once";
 	}
 
+	public static ExcatlyOnce once() {
+		return new ExcatlyOnce();
+	}
+
 }

@@ -18,9 +18,12 @@ public class RequestBuilder {
 		return this;
 	}
 
+	public RequestBuilder post(String url) {
+		return method("POST").url(url);
+	}
+
 	public RequestBuilder get(String url) {
-		this.method = "GET";
-		return url(url);
+		return method("GET").url(url);
 	}
 
 	public RequestBuilder method(String method) {

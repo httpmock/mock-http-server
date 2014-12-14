@@ -1,5 +1,6 @@
 package de.sn.mock;
 
+import static de.sn.mock.builder.ResponseBuilder.response;
 import static org.apache.tomcat.util.codec.binary.Base64.decodeBase64;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -48,8 +49,8 @@ public class MockIT {
 	private RequestSpecification given() {
 		RequestSpecification given = RestAssured.given();
 		given.baseUri("http://localhost") //
-		.port(SERVER_PORT) //
-		.basePath("/mockserver");
+				.port(SERVER_PORT) //
+				.basePath("/mockserver");
 		return given;
 	}
 
@@ -68,8 +69,8 @@ public class MockIT {
 				someRequest(METHOD_POST), someResponse());
 
 		given().contentType("application/json").body(toJson(mockConfiguration))
-		.post(mockDefinition.getConfigurationUrl()) //
-		.then().statusCode(is(200));
+				.post(mockDefinition.getConfigurationUrl()) //
+				.then().statusCode(is(200));
 	}
 
 	private String toJson(Object object) {
@@ -156,10 +157,9 @@ public class MockIT {
 	public void replayBinaryData() throws Exception {
 		MockDto mock = initMock();
 		RequestDto request = someRequest(METHOD_GET);
-		ResponseDto response = someResponse();
-		response.setPayload(Base64
-				.encodeBase64String(getByteArray("src/test/resources/mock.pdf")));
-		response.setContentType("application/pdf");
+		ResponseDto response = response().contentType("application/pdf")
+				.payload(getByteArray("src/test/resources/mock.pdf")).build();
+
 		ConfigurationDto mockConfiguration = someMockConfiguration(request,
 				response);
 
@@ -250,19 +250,19 @@ public class MockIT {
 	private void verifyNumberOfCalls(MockDto mock, RequestDto request,
 			int numberOfCalls) {
 		given().contentType("application/json").body(toJson(request))
-		.post(mock.getVerifyUrl()).then()
-		.body("times", is(numberOfCalls));
+				.post(mock.getVerifyUrl()).then()
+				.body("times", is(numberOfCalls));
 	}
 
 	private void validateResponse(Response response, ResponseDto responseConfig) {
 		response.then()
-		.statusCode(responseConfig.getStatusCode())
-		//
-		.and()
-		.contentType(is(responseConfig.getContentType()))
-		//
-		.and()
-		.body(is(new String(decodeBase64(responseConfig.getPayload()))));
+				.statusCode(responseConfig.getStatusCode())
+				//
+				.and()
+				.contentType(is(responseConfig.getContentType()))
+				//
+				.and()
+				.body(is(new String(decodeBase64(responseConfig.getPayload()))));
 	}
 
 	private Response doRequest(MockDto mockDefinition, RequestDto request) {
@@ -288,8 +288,8 @@ public class MockIT {
 			ConfigurationDto mockConfiguration) {
 		Gson gson = new Gson();
 		given().contentType("application/json")
-		.body(gson.toJson(mockConfiguration))
-		.post(mockDefintion.getConfigurationUrl());
+				.body(gson.toJson(mockConfiguration))
+				.post(mockDefintion.getConfigurationUrl());
 	}
 
 	private ConfigurationDto someMockConfiguration(RequestDto request,
@@ -301,13 +301,8 @@ public class MockIT {
 	}
 
 	private ResponseDto someResponse() {
-		ResponseDto responseConfiguration = new ResponseDto();
-		responseConfiguration.setContentType("application/json");
-		responseConfiguration.setStatusCode(200);
-		responseConfiguration.setPayload(Base64
-				.encodeBase64String("{\"result\": \"some response\"}"
-						.getBytes()));
-		return responseConfiguration;
+		return response().contentType("application/json").statusCode(200)
+				.payload("{\"result\": \"some response\"}").build();
 	}
 
 	private RequestDto someRequest(String method) {

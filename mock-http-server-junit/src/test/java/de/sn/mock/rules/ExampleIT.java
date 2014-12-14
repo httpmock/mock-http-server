@@ -3,7 +3,7 @@ package de.sn.mock.rules;
 import static com.jayway.restassured.RestAssured.given;
 import static de.sn.mock.builder.RequestBuilder.request;
 import static de.sn.mock.builder.ResponseBuilder.response;
-import static de.sn.mock.times.Times.once;
+import static de.sn.mock.times.ExcatlyOnce.once;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -15,8 +15,6 @@ import com.jayway.restassured.response.Response;
 
 import de.sn.mock.dto.RequestDto;
 import de.sn.mock.dto.ResponseDto;
-import de.sn.mock.rules.HttpMock;
-import de.sn.mock.rules.HttpMockServer;
 
 public class ExampleIT {
 

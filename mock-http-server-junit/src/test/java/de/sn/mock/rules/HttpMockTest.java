@@ -21,7 +21,7 @@ import de.sn.mock.dto.ConfigurationDto;
 import de.sn.mock.dto.RequestDto;
 import de.sn.mock.dto.ResponseDto;
 import de.sn.mock.dto.VerifyResponseDto;
-import de.sn.mock.times.Times;
+import de.sn.mock.times.ExcatlyOnce;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HttpMockTest {
@@ -68,7 +68,7 @@ public class HttpMockTest {
 		when(mockService.verify(request)).thenReturn(numberOfTimes(0));
 
 		expectedException.expect(MockVerifyException.class);
-		httpMock.verify(request, Times.once());
+		httpMock.verify(request, ExcatlyOnce.once());
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class HttpMockTest {
 		RequestDto request = mock(RequestDto.class);
 		when(mockService.verify(request)).thenReturn(numberOfTimes(1));
 
-		httpMock.verify(request, Times.once());
+		httpMock.verify(request, ExcatlyOnce.once());
 	}
 
 	private VerifyResponseDto numberOfTimes(int times) {
