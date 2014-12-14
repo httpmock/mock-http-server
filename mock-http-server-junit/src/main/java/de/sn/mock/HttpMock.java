@@ -15,6 +15,7 @@ import de.sn.mock.times.Times;
 
 public class HttpMock extends ExternalResource {
 
+	private static final String MOCK_SERVER_CONTEXT = "/mockserver";
 	private static final String VERIFICATION_FAILED = "Mock verification failed. Request was called %d times but should have been called %s";
 	private HttpMockServer mockServer;
 	private MockDto mock;
@@ -49,7 +50,7 @@ public class HttpMock extends ExternalResource {
 
 	private RequestSpecification given() {
 		return RestAssured.given().baseUri(getBaseUri())
-				.basePath("/mockserver");
+				.basePath(MOCK_SERVER_CONTEXT);
 	}
 
 	public Stubbing when(RequestDto request) {
@@ -62,7 +63,7 @@ public class HttpMock extends ExternalResource {
 	}
 
 	public String getRequestUrl() {
-		return "/mockserver" + mock.getRequestUrl();
+		return MOCK_SERVER_CONTEXT + mock.getRequestUrl();
 	}
 
 	public void verify(RequestDto request, Times times) {

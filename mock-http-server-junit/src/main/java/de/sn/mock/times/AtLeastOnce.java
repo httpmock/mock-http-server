@@ -4,12 +4,12 @@ public class AtLeastOnce extends Times {
 
 	@Override
 	public boolean matches(int num) {
-		return num == 1;
+		return num >= 1;
 	}
 
 	@Override
 	public String getFailedDescription() {
-		return "once";
+		return "at least once";
 	}
 
 }
