@@ -1,4 +1,4 @@
-package de.sn.mock;
+package de.sn.mock.rules;
 
 import de.sn.mock.dto.ConfigurationDto;
 import de.sn.mock.dto.RequestDto;
@@ -6,16 +6,16 @@ import de.sn.mock.dto.ResponseDto;
 
 public class Stubbing {
 
-	private HttpMock httpMock;
+	private MockService httpMock;
 	private RequestDto request;
 
-	public Stubbing(HttpMock httpMock, RequestDto request) {
-		this.httpMock = httpMock;
+	public Stubbing(MockService mockService, RequestDto request) {
+		this.httpMock = mockService;
 		this.request = request;
 	}
 
 	public void thenRespond(ResponseDto response) {
-		httpMock.addConfig(new ConfigurationDto(request, response));
+		httpMock.configure(new ConfigurationDto(request, response));
 	}
 
 }

@@ -1,4 +1,4 @@
-package de.sn.mock;
+package de.sn.mock.rules;
 
 import static com.jayway.restassured.RestAssured.given;
 import static de.sn.mock.builder.RequestBuilder.request;
@@ -15,6 +15,8 @@ import com.jayway.restassured.response.Response;
 
 import de.sn.mock.dto.RequestDto;
 import de.sn.mock.dto.ResponseDto;
+import de.sn.mock.rules.HttpMock;
+import de.sn.mock.rules.HttpMockServer;
 
 public class ExampleIT {
 
