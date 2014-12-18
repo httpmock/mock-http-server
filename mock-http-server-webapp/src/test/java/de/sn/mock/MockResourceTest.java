@@ -31,11 +31,11 @@ import de.sn.mock.dto.VerifyResponseDto;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockResourceTest {
+	private static final int STATUS_OK = 200;
+
 	private static final int STATUS_NOT_CONFIGURED = 204;
 
 	private static final String URL = "some/url";
-
-	private static final int STATUS_OK = 200;
 
 	private static final String ID = "some id";
 
@@ -141,7 +141,7 @@ public class MockResourceTest {
 		Response replayedResponse = replayUrl(requestDto);
 
 		assertThat(replayedResponse, is(notNullValue()));
-		assertThat(replayedResponse.getStatus(), is(200));
+		assertThat(replayedResponse.getStatus(), is(STATUS_OK));
 		assertThat(replayedResponse.getEntity(), is((Object) "test".getBytes()));
 	}
 
@@ -174,7 +174,7 @@ public class MockResourceTest {
 		Response replayedResponse = replayUrl(incommingRequest);
 
 		assertThat(replayedResponse, is(notNullValue()));
-		assertThat(replayedResponse.getStatus(), is(200));
+		assertThat(replayedResponse.getStatus(), is(STATUS_OK));
 	}
 
 	@Test
@@ -190,7 +190,7 @@ public class MockResourceTest {
 		Response replayedResponse = replayUrl(incommingRequest);
 
 		assertThat(replayedResponse, is(notNullValue()));
-		assertThat(replayedResponse.getStatus(), is(200));
+		assertThat(replayedResponse.getStatus(), is(STATUS_OK));
 	}
 
 	@Test
@@ -256,7 +256,7 @@ public class MockResourceTest {
 	}
 
 	@Test
-	public void replayGet() throws Exception {
+	public void replayOtherMethods() throws Exception {
 		RequestDto requestDto = someRequest();
 		ResponseDto responseDto = response().build();
 		configureRequestAndResponse(requestDto, responseDto);
@@ -266,6 +266,7 @@ public class MockResourceTest {
 
 		Response replayPost = mockResource.replayPost(ID, requestDto.getUrl(),
 				null, headers, request);
+		assertThat(replayPost.getStatus(), is(STATUS_OK));
 		assertEqualResponses(mockResource.replayGet(ID, requestDto.getUrl(),
 				null, headers, request), replayPost);
 		assertEqualResponses(mockResource.replayPut(ID, requestDto.getUrl(),
@@ -277,10 +278,26 @@ public class MockResourceTest {
 	}
 
 	@Test
+	public void replayWithGetParameters() throws Exception {
+		RequestDto requestDto = request().post(URL + "?var=value&var2=value2")
+				.build();
+		ResponseDto responseDto = response().build();
+		configureRequestAndResponse(requestDto, responseDto);
+		when(request.getMethod()).thenReturn(requestDto.getMethod());
+		HttpHeaders headers = mock(HttpHeaders.class);
+		mockContentTypeHeaders(headers, requestDto);
+
+		Response replayResponse = mockResource.replayPost(ID,
+				requestDto.getUrl(), null, headers, request);
+
+		assertThat(replayResponse.getStatus(), is(STATUS_OK));
+	}
+
+	@Test
 	public void delete() throws Exception {
 		Response response = mockResource.delete(ID);
 		verify(mockService).delete(ID);
-		assertThat(response.getStatus(), is(200));
+		assertThat(response.getStatus(), is(STATUS_OK));
 	}
 
 	private void assertEqualResponses(Response response,
@@ -313,4 +330,5 @@ public class MockResourceTest {
 		when(mockService.findMock(ID)).thenReturn(mock);
 		return mock;
 	}
+
 }

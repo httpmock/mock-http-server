@@ -10,7 +10,6 @@ import de.sn.mock.dto.ResponseDto;
 
 public class ResponseBuilder {
 	private String payload;
-	private String contentType;
 	private int statusCode;
 	private Map<String, String> headers;
 

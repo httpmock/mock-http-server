@@ -6,16 +6,16 @@ import de.sn.mock.dto.ResponseDto;
 
 public class Stubbing {
 
-	private MockService httpMock;
+	private MockService mockService;
 	private RequestDto request;
 
 	public Stubbing(MockService mockService, RequestDto request) {
-		this.httpMock = mockService;
+		this.mockService = mockService;
 		this.request = request;
 	}
 
 	public void thenRespond(ResponseDto response) {
-		httpMock.configure(new ConfigurationDto(request, response));
+		mockService.configure(new ConfigurationDto(request, response));
 	}
 
 }

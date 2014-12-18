@@ -28,6 +28,8 @@ import de.sn.mock.dto.ResponseDto;
 
 public class MockIT {
 
+	private static final int STATUS_OK = 200;
+	private static final int STATUS_NOT_CONFIGURED = 204;
 	private static final String METHOD_GET = "GET";
 	private static final String METHOD_POST = "POST";
 	private static final int SERVER_PORT = 8089;
@@ -49,8 +51,8 @@ public class MockIT {
 	private RequestSpecification given() {
 		RequestSpecification given = RestAssured.given();
 		given.baseUri("http://localhost") //
-				.port(SERVER_PORT) //
-				.basePath("/mockserver");
+		.port(SERVER_PORT) //
+		.basePath("/mockserver");
 		return given;
 	}
 
@@ -69,8 +71,8 @@ public class MockIT {
 				someRequest(METHOD_POST), someResponse());
 
 		given().contentType("application/json").body(toJson(mockConfiguration))
-				.post(mockDefinition.getConfigurationUrl()) //
-				.then().statusCode(is(200));
+		.post(mockDefinition.getConfigurationUrl()) //
+		.then().statusCode(is(STATUS_OK));
 	}
 
 	private String toJson(Object object) {
@@ -250,19 +252,19 @@ public class MockIT {
 	private void verifyNumberOfCalls(MockDto mock, RequestDto request,
 			int numberOfCalls) {
 		given().contentType("application/json").body(toJson(request))
-				.post(mock.getVerifyUrl()).then()
-				.body("times", is(numberOfCalls));
+		.post(mock.getVerifyUrl()).then()
+		.body("times", is(numberOfCalls));
 	}
 
 	private void validateResponse(Response response, ResponseDto responseConfig) {
 		response.then()
-				.statusCode(responseConfig.getStatusCode())
-				//
-				.and()
-				.contentType(is(responseConfig.getContentType()))
-				//
-				.and()
-				.body(is(new String(decodeBase64(responseConfig.getPayload()))));
+		.statusCode(responseConfig.getStatusCode())
+		//
+		.and()
+		.contentType(is(responseConfig.getContentType()))
+		//
+		.and()
+		.body(is(new String(decodeBase64(responseConfig.getPayload()))));
 	}
 
 	private Response doRequest(MockDto mockDefinition, RequestDto request) {
@@ -288,8 +290,8 @@ public class MockIT {
 			ConfigurationDto mockConfiguration) {
 		Gson gson = new Gson();
 		given().contentType("application/json")
-				.body(gson.toJson(mockConfiguration))
-				.post(mockDefintion.getConfigurationUrl());
+		.body(gson.toJson(mockConfiguration))
+		.post(mockDefintion.getConfigurationUrl());
 	}
 
 	private ConfigurationDto someMockConfiguration(RequestDto request,
@@ -328,6 +330,7 @@ public class MockIT {
 
 		given().delete(mock.getUrl());
 
-		assertThat(doRequest(mock, request).statusCode(), is(204));
+		assertThat(doRequest(mock, request).statusCode(),
+				is(STATUS_NOT_CONFIGURED));
 	}
 }
