@@ -6,6 +6,22 @@ This example shows an integration test which configures the mock to answer for a
 It also shows how to use this mock server with junit.
 
 ```java
+import static com.jayway.restassured.RestAssured.given;
+import static de.sn.mock.builder.RequestBuilder.request;
+import static de.sn.mock.builder.ResponseBuilder.response;
+import static de.sn.mock.times.ExcatlyOnce.once;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+
+import com.jayway.restassured.response.Response;
+
+import de.sn.mock.dto.RequestDto;
+import de.sn.mock.dto.ResponseDto;
+
 public class ExampleIT {
 
 	@ClassRule
