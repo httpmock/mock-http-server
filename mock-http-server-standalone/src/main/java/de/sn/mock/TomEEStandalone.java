@@ -30,19 +30,6 @@ public class TomEEStandalone {
 		return "target/wars/mockserver.war";
 	}
 
-	public void start() {
-		try {
-			container.start();
-		} catch (Exception e) {
-			throw new ServerException(e);
-		}
-	}
-
-	private void waitUntilStop() {
-		Runtime.getRuntime().addShutdownHook(new ShutdownHook(container));
-		container.await();
-	}
-
 	public TomEEStandalone(int serverPort, int stopPort) {
 		this(serverPort, stopPort, new Container());
 	}
@@ -72,6 +59,14 @@ public class TomEEStandalone {
 		this.container.setup(createConfiguration());
 	}
 
+	public void start() {
+		try {
+			container.start();
+		} catch (Exception e) {
+			throw new ServerException(e);
+		}
+	}
+
 	public void deploy(String pathToWar) {
 		try {
 			container.deploy("mockserver", new File(pathToWar));
@@ -86,12 +81,17 @@ public class TomEEStandalone {
 		config.setHttpPort(serverPort);
 		config.setStopPort(stopPort);
 		config.setDir(new File(new File("target"), "apache-tomee")
-		.getAbsolutePath());
+				.getAbsolutePath());
 		return config;
 	}
 
 	public void stop() throws Exception {
 		container.stop();
+	}
+
+	private void waitUntilStop() {
+		Runtime.getRuntime().addShutdownHook(new ShutdownHook(container));
+		container.await();
 	}
 
 	public int getHttpPort() {

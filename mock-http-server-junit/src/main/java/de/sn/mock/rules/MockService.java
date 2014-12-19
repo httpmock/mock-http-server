@@ -23,7 +23,7 @@ public class MockService {
 		mock = given().post("/mock/create").as(MockDto.class);
 	}
 
-	private RequestSpecification given() {
+	RequestSpecification given() {
 		return RestAssured.given().baseUri(baseUri).basePath(mockServerContext);
 	}
 
@@ -33,7 +33,7 @@ public class MockService {
 
 	public void configure(ConfigurationDto config) {
 		given().body(config).contentType("application/json")
-				.post(mock.getConfigurationUrl());
+		.post(mock.getConfigurationUrl());
 	}
 
 	public VerifyResponseDto verify(RequestDto request) {
@@ -46,6 +46,14 @@ public class MockService {
 
 	public String getRequestUrl() {
 		return mockServerContext + mock.getRequestUrl();
+	}
+
+	MockDto getMock() {
+		return mock;
+	}
+
+	void setMock(MockDto mock) {
+		this.mock = mock;
 	}
 
 }
