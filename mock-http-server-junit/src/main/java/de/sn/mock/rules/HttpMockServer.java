@@ -2,6 +2,7 @@ package de.sn.mock.rules;
 
 import org.junit.rules.ExternalResource;
 
+import de.sn.mock.ServerException;
 import de.sn.mock.TomEEStandalone;
 
 public class HttpMockServer extends ExternalResource {
@@ -18,7 +19,7 @@ public class HttpMockServer extends ExternalResource {
 		try {
 			applicationServer.start();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new ServerException(e);
 		}
 		applicationServer.deploy("target/wars/mockserver.war");
 	}
@@ -36,7 +37,7 @@ public class HttpMockServer extends ExternalResource {
 		try {
 			applicationServer.stop();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new ServerException(e);
 		}
 	}
 
