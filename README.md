@@ -1,6 +1,9 @@
 mock-http-server
 ================
 
+[![Coverage Status](https://img.shields.io/coveralls/snordquist/mock-http-server.svg)](https://coveralls.io/r/snordquist/mock-http-server)
+
+
 With this mock http server you can write integration tests for your application and mock its http based backends.
 This example shows an integration test which configures the mock to answer for a specific request with a specific response. 
 It also shows how to use this mock server with junit.
