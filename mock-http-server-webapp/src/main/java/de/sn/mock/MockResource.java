@@ -53,8 +53,8 @@ public class MockResource {
 	}
 
 	MockDto createMockDto(MockInstance mockInstance) {
-		MockDto mockDto = new MockDto();
 		String mockId = mockInstance.getId();
+		MockDto mockDto = new MockDto();
 		mockDto.setUrl(String.format("/mock/%s", mockId));
 		mockDto.setConfigurationUrl(String.format("/mock/%s/configure", mockId));
 		mockDto.setRequestUrl(String.format("/mock/%s/request", mockId));
@@ -154,7 +154,7 @@ public class MockResource {
 	private Response toResponse(ResponseDto response) {
 		ResponseBuilder replayResponse = Response.status(
 				response.getStatusCode()).entity(
-				decodePayload(response.getPayload()));
+						decodePayload(response.getPayload()));
 		addHeaders(response, replayResponse);
 		return replayResponse.build();
 	}
@@ -193,7 +193,7 @@ public class MockResource {
 		VerifyResponseDto verifyResponseDto = new VerifyResponseDto();
 		if (configuration != null)
 			verifyResponseDto
-					.setTimes(mock.getCount(configuration.getRequest()));
+			.setTimes(mock.getCount(configuration.getRequest()));
 		return Response.ok(verifyResponseDto).build();
 	}
 

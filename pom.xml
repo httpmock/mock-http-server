@@ -123,11 +123,21 @@
 					<formats>
 						<format>xml</format>
 					</formats>
+					<maxmem>256m</maxmem>
+					<aggregate>true</aggregate>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.eluder.coveralls</groupId>
+				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration>
+					<repoToken>yhRaAL3uOTMHCpvxKQreETGzNPRMivIf9</repoToken>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
