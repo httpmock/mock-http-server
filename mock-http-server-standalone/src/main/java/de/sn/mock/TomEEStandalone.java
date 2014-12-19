@@ -6,24 +6,21 @@ import java.net.ServerSocket;
 
 import javax.naming.NamingException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.openejb.OpenEJBException;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
 
 public class TomEEStandalone {
-	private final Container container;
+	final Container container;
 	private final int serverPort;
 	private final int stopPort;
 
 	public static void main(String[] args) {
 		TomEEStandalone tomee = new TomEEStandalone(9090, 9099);
-		try {
-			tomee.start();
-			tomee.deploy(getPathToWar(args));
-			tomee.waitUntilStop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		tomee.start();
+		tomee.deploy(getPathToWar(args));
+		tomee.waitUntilStop();
 	}
 
 	private static String getPathToWar(String[] args) {
@@ -33,21 +30,16 @@ public class TomEEStandalone {
 		return "target/wars/mockserver.war";
 	}
 
-	public void start() throws Exception {
-		container.start();
+	public void start() {
+		try {
+			container.start();
+		} catch (Exception e) {
+			throw new ServerException(e);
+		}
 	}
 
 	private void waitUntilStop() {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				try {
-					container.stop();
-				} catch (final Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		Runtime.getRuntime().addShutdownHook(new ShutdownHook(container));
 		container.await();
 	}
 
@@ -60,14 +52,16 @@ public class TomEEStandalone {
 	}
 
 	private static int getRandomPort() {
-		ServerSocket s;
+		ServerSocket serverSocket = null;
 		try {
-			s = new ServerSocket(0);
-			int port = s.getLocalPort();
-			s.close();
+			serverSocket = new ServerSocket(0);
+			int port = serverSocket.getLocalPort();
+			serverSocket.close();
 			return port;
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new ServerException(e);
+		} finally {
+			IOUtils.closeQuietly(serverSocket);
 		}
 	}
 
@@ -82,7 +76,7 @@ public class TomEEStandalone {
 		try {
 			container.deploy("mockserver", new File(pathToWar));
 		} catch (OpenEJBException | IOException | NamingException e) {
-			e.printStackTrace();
+			throw new ServerException(e);
 		}
 	}
 
@@ -92,7 +86,7 @@ public class TomEEStandalone {
 		config.setHttpPort(serverPort);
 		config.setStopPort(stopPort);
 		config.setDir(new File(new File("target"), "apache-tomee")
-				.getAbsolutePath());
+		.getAbsolutePath());
 		return config;
 	}
 

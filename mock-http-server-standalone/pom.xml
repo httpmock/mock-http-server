@@ -36,7 +36,13 @@
 			<groupId>org.apache.openejb</groupId>
 			<artifactId>tomee-jaxrs</artifactId>
 			<version>1.7.1</version>
-		</dependency><!-- TEST -->
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<!-- TEST -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>mock-http-server-dto</artifactId>
@@ -52,12 +58,6 @@
 			<groupId>com.jayway.restassured</groupId>
 			<artifactId>rest-assured</artifactId>
 			<version>2.4.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
