@@ -1,7 +1,5 @@
 package de.sn.mock;
 
-import static de.sn.mock.util.UrlNormalizer.normalizeUrl;
-
 import javax.ejb.Stateless;
 
 import de.sn.mock.dto.RequestDto;
@@ -23,9 +21,11 @@ public class RequestMatcher {
 
 	private boolean isUrlMatching(RequestDto configuredRequest,
 			RequestDto request1) {
-		String incommingUrl = normalizeUrl(request1.getUrl());
-		String configuredUrl = normalizeUrl(configuredRequest.getUrl());
-		return incommingUrl.matches(configuredUrl);
+		Url incommingUrl = new Url(request1.getUrl());
+		Url configuredUrl = new Url(configuredRequest.getUrl());
+		return incommingUrl.getPath().matches(configuredUrl.getPath())
+				&& incommingUrl.getQueryParameters().equals(
+						configuredUrl.getQueryParameters());
 	}
 
 	private boolean isContentTypeMatching(RequestDto configuredRequest,

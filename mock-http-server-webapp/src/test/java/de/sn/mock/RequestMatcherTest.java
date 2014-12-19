@@ -103,6 +103,27 @@ public class RequestMatcherTest {
 				is(false));
 	}
 
+	@Test
+	public void matchRequestWithQueryParametersInDifferentOrder()
+			throws Exception {
+		RequestDto configuredRequest = request().url(
+				"some/url?var1=value1&var2=value2").build();
+		RequestDto incommingRequest = request().url(
+				"some/url?var2=value2&var1=value1").build();
+		assertThat(matcher.matches(configuredRequest, incommingRequest),
+				is(true));
+	}
+
+	@Test
+	public void noMatchRequestWithDifferentQueryParameters() throws Exception {
+		RequestDto configuredRequest = request().url(
+				"some/url?var1=value1&var2=value2").build();
+		RequestDto incommingRequest = request().url(
+				"some/url?var2=value2&var1=value123").build();
+		assertThat(matcher.matches(configuredRequest, incommingRequest),
+				is(false));
+	}
+
 	private RequestBuilder someRequest() {
 		return request().url("some/url");
 	}
