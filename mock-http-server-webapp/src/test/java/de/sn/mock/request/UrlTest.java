@@ -1,4 +1,4 @@
-package de.sn.mock;
+package de.sn.mock.request;
 
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
@@ -6,6 +6,8 @@ import static org.junit.Assert.assertThat;
 
 import org.hamcrest.collection.IsMapContaining;
 import org.junit.Test;
+
+import de.sn.mock.request.Url;
 
 public class UrlTest {
 	@Test

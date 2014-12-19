@@ -1,4 +1,4 @@
-package de.sn.mock;
+package de.sn.mock.request;
 
 import static de.sn.mock.builder.RequestBuilder.request;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import de.sn.mock.builder.RequestBuilder;
 import de.sn.mock.dto.RequestDto;
+import de.sn.mock.request.RequestMatcher;
 
 public class RequestMatcherTest {
 	private RequestMatcher matcher;

@@ -1,4 +1,4 @@
-package de.sn.mock;
+package de.sn.mock.request;
 
 import static de.sn.mock.util.CollectionUtil.emptyMap;
 

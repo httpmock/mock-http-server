@@ -1,4 +1,4 @@
-package de.sn.mock;
+package de.sn.mock.request;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.Test;
 
 import de.sn.mock.dto.RequestDto;
+import de.sn.mock.request.RequestCounter;
 
 public class RequestCounterTest {
 	@Test

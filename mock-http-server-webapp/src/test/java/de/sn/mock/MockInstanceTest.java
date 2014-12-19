@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import de.sn.mock.dto.RequestDto;
+import de.sn.mock.request.RequestCounter;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockInstanceTest {

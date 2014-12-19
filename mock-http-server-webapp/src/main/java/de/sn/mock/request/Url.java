@@ -1,9 +1,10 @@
-package de.sn.mock;
+package de.sn.mock.request;
 
 import static de.sn.mock.util.CollectionUtil.emptyMap;
 
 import java.util.Map;
 
+import de.sn.mock.util.KeyValuePair;
 import de.sn.mock.util.UrlNormalizer;
 
 public class Url {

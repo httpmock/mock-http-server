@@ -28,6 +28,7 @@ import de.sn.mock.dto.MockDto;
 import de.sn.mock.dto.RequestDto;
 import de.sn.mock.dto.ResponseDto;
 import de.sn.mock.dto.VerifyResponseDto;
+import de.sn.mock.request.RequestMatcher;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockResourceTest {

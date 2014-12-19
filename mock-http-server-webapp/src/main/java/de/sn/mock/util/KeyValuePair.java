@@ -1,4 +1,4 @@
-package de.sn.mock;
+package de.sn.mock.util;
 
 public class KeyValuePair<T1, T2> {
 	private T1 key;

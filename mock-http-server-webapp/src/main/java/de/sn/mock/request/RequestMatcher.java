@@ -1,4 +1,4 @@
-package de.sn.mock;
+package de.sn.mock.request;
 
 import javax.ejb.Stateless;
 
