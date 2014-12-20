@@ -1,12 +1,12 @@
 package de.sn.mock;
 
+import static de.sn.mock.PortUtil.getRandomPort;
+
 import java.io.File;
 import java.io.IOException;
-import java.net.ServerSocket;
 
 import javax.naming.NamingException;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.openejb.OpenEJBException;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
@@ -36,20 +36,6 @@ public class TomEEStandalone {
 
 	public TomEEStandalone() {
 		this(getRandomPort(), getRandomPort());
-	}
-
-	private static int getRandomPort() {
-		ServerSocket serverSocket = null;
-		try {
-			serverSocket = new ServerSocket(0);
-			int port = serverSocket.getLocalPort();
-			serverSocket.close();
-			return port;
-		} catch (IOException e) {
-			throw new ServerException(e);
-		} finally {
-			IOUtils.closeQuietly(serverSocket);
-		}
 	}
 
 	TomEEStandalone(int serverPort, int stopPort, Container container) {
@@ -89,7 +75,7 @@ public class TomEEStandalone {
 		container.stop();
 	}
 
-	private void waitUntilStop() {
+	void waitUntilStop() {
 		Runtime.getRuntime().addShutdownHook(new ShutdownHook(container));
 		container.await();
 	}
