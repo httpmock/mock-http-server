@@ -1,7 +1,7 @@
 mock-http-server
 ================
 
-[![Coverage Status](https://img.shields.io/coveralls/snordquist/mock-http-server.svg)](https://coveralls.io/r/snordquist/mock-http-server)
+[![Coverage Status](https://img.shields.io/coveralls/httpmock/mock-http-server.svg)](https://coveralls.io/r/httpmock/mock-http-server)
 
 
 With this mock http server you can write integration tests for your application and mock its http based backends.
