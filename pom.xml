@@ -136,7 +136,7 @@
 				<artifactId>coveralls-maven-plugin</artifactId>
 				<version>3.0.1</version>
 				<configuration>
-					<repoToken>yhRaAL3uOTMHCpvxKQreETGzNPRMivIf9</repoToken>
+					<repoToken>8WITr60rZPpOv8ACzKglMIsikKKg2RD2I</repoToken>
 				</configuration>
 			</plugin>
 		</plugins>
