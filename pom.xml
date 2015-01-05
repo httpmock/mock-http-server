@@ -8,7 +8,6 @@
 	<packaging>pom</packaging>
 
 	<name>mock-http-server</name>
-
 	<url>https://github.com/httpmock/mock-http-server</url>
 	<licenses>
 		<license>
