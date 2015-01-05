@@ -8,7 +8,7 @@
 			<cxf:logging />
 		</jaxrs:features>
 	</jaxrs:server>
-	<bean class="de.sn.mock.MockResource">
+	<bean class="com.github.httpmock.MockResource">
 		<property name="level" value="ALL" />
 	</bean>
 </beans>

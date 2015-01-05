@@ -8,7 +8,7 @@
 	<url>http://maven.apache.org</url>
 
 	<parent>
-		<groupId>de.sn.mock</groupId>
+		<groupId>com.github.httpmock</groupId>
 		<artifactId>mock-http-server</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
