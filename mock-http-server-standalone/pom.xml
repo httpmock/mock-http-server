@@ -38,6 +38,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>mock-http-server-dto</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
@@ -62,12 +67,6 @@
 			<version>2.4</version>
 		</dependency>
 		<!-- TEST -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>mock-http-server-dto</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.jayway.restassured</groupId>
 			<artifactId>rest-assured</artifactId>

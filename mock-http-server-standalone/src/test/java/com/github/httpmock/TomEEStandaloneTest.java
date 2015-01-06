@@ -15,13 +15,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import com.github.httpmock.ServerException;
-import com.github.httpmock.TomEEStandalone;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TomEEStandaloneTest {
@@ -34,7 +30,6 @@ public class TomEEStandaloneTest {
 	@Mock
 	private Container container;
 
-	@InjectMocks
 	private TomEEStandalone tomee;
 
 	private TomEEStandalone createServer() {

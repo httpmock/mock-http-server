@@ -1,5 +1,9 @@
 package com.github.httpmock.rules;
 
+import static com.github.httpmock.PortUtil.getRandomPorts;
+
+import java.util.List;
+
 import org.junit.rules.ExternalResource;
 
 import com.github.httpmock.ServerException;
@@ -25,7 +29,8 @@ public class HttpMockServer extends ExternalResource {
 	}
 
 	TomEEStandalone createApplicationServer() {
-		return new TomEEStandalone();
+		List<Integer> randomPorts = getRandomPorts(2);
+		return new TomEEStandalone(randomPorts.get(0), randomPorts.get(1));
 	}
 
 	@Override

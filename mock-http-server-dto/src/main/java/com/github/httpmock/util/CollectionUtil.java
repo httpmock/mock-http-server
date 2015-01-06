@@ -11,6 +11,10 @@ public abstract class CollectionUtil {
 		return new ArrayList<T>();
 	}
 
+	public static <T> List<T> emptyList(int size) {
+		return new ArrayList<T>(size);
+	}
+
 	public static <K, V> Map<K, V> emptyMap() {
 		return new HashMap<K, V>();
 	}

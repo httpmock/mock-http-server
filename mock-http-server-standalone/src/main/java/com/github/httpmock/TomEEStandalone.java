@@ -1,7 +1,5 @@
 package com.github.httpmock;
 
-import static com.github.httpmock.PortUtil.getRandomPort;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -32,10 +30,6 @@ public class TomEEStandalone {
 
 	public TomEEStandalone(int serverPort, int stopPort) {
 		this(serverPort, stopPort, new Container());
-	}
-
-	public TomEEStandalone() {
-		this(getRandomPort(), getRandomPort());
 	}
 
 	TomEEStandalone(int serverPort, int stopPort, Container container) {
