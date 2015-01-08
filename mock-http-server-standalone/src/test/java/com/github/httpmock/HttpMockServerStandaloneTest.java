@@ -20,7 +20,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TomEEStandaloneTest {
+public class HttpMockServerStandaloneTest {
 	private static final int SERVER_PORT = 0;
 	private static final int SERVER_STOP_PORT = 0;
 
@@ -30,10 +30,10 @@ public class TomEEStandaloneTest {
 	@Mock
 	private Container container;
 
-	private TomEEStandalone tomee;
+	private HttpMockServerStandalone tomee;
 
-	private TomEEStandalone createServer() {
-		return new TomEEStandalone(SERVER_PORT, SERVER_STOP_PORT, container);
+	private HttpMockServerStandalone createServer() {
+		return new HttpMockServerStandalone(SERVER_PORT, SERVER_STOP_PORT, container);
 	}
 
 	@Before

@@ -32,18 +32,18 @@ public class MockIT {
 	private static final String METHOD_POST = "POST";
 	private static final int SERVER_PORT = 8089;
 	private static final int SERVER_STOP_PORT = 8012;
-	private static TomEEStandalone tomee;
+	private static HttpMockServerStandalone mockServer;
 
 	@BeforeClass
 	public static void startServer() throws Exception {
-		tomee = new TomEEStandalone(SERVER_PORT, SERVER_STOP_PORT);
-		tomee.start();
-		tomee.deploy("target/wars/mockserver.war");
+		mockServer = new HttpMockServerStandalone(SERVER_PORT, SERVER_STOP_PORT);
+		mockServer.start();
+		mockServer.deploy("target/wars/mockserver.war");
 	}
 
 	@AfterClass
 	public static void stopServer() throws Exception {
-		tomee.stop();
+		mockServer.stop();
 	}
 
 	private RequestSpecification given() {

@@ -20,7 +20,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.github.httpmock.ServerException;
-import com.github.httpmock.TomEEStandalone;
+import com.github.httpmock.HttpMockServerStandalone;
 import com.github.httpmock.rules.HttpMockServer;
 import com.github.httpmock.rules.MockService;
 
@@ -31,7 +31,7 @@ public class HttpMockServerTest {
 	private HttpMockServer httpMockServer = new HttpMockServer();
 
 	@Mock
-	private TomEEStandalone applicationServer;
+	private HttpMockServerStandalone applicationServer;
 
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();

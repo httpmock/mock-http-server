@@ -7,10 +7,10 @@ import java.util.List;
 import org.junit.rules.ExternalResource;
 
 import com.github.httpmock.ServerException;
-import com.github.httpmock.TomEEStandalone;
+import com.github.httpmock.HttpMockServerStandalone;
 
 public class HttpMockServer extends ExternalResource {
-	private TomEEStandalone applicationServer;
+	private HttpMockServerStandalone applicationServer;
 	private static final String MOCK_SERVER_CONTEXT = "/mockserver";
 
 	@Override
@@ -28,9 +28,9 @@ public class HttpMockServer extends ExternalResource {
 		applicationServer.deploy("target/wars/mockserver.war");
 	}
 
-	TomEEStandalone createApplicationServer() {
+	HttpMockServerStandalone createApplicationServer() {
 		List<Integer> randomPorts = getRandomPorts(2);
-		return new TomEEStandalone(randomPorts.get(0), randomPorts.get(1));
+		return new HttpMockServerStandalone(randomPorts.get(0), randomPorts.get(1));
 	}
 
 	@Override
