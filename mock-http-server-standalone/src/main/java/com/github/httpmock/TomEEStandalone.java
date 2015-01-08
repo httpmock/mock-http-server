@@ -10,15 +10,36 @@ import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
 
 public class TomEEStandalone {
+	private static final int PORT_STOP_DEFAULT = 9099;
+	private static final int PORT_HTTP_DEFAULT = 9090;
+	private static final String ENV_HTTP_PORT = "HTTP_MOCK_SERVER_PORT_HTTP";
+	private static final String ENV_STOP_PORT = "HTTP_MOCK_SERVER_PORT_STOP";
+
 	final Container container;
 	private final int serverPort;
 	private final int stopPort;
 
 	public static void main(String[] args) {
-		TomEEStandalone tomee = new TomEEStandalone(9090, 9099);
+		TomEEStandalone tomee = new TomEEStandalone(//
+				getConfiguredHttpPort(), //
+				getConfiguredStopPort());
 		tomee.start();
 		tomee.deploy(getPathToWar(args));
 		tomee.waitUntilStop();
+	}
+
+	private static int getConfiguredStopPort() {
+		int stopPort = PORT_STOP_DEFAULT;
+		if (System.getenv(ENV_STOP_PORT) != null)
+			stopPort = Integer.parseInt(System.getenv(ENV_STOP_PORT));
+		return stopPort;
+	}
+
+	private static int getConfiguredHttpPort() {
+		int httpPort = PORT_HTTP_DEFAULT;
+		if (System.getenv(ENV_HTTP_PORT) != null)
+			httpPort = Integer.parseInt(System.getenv(ENV_HTTP_PORT));
+		return httpPort;
 	}
 
 	private static String getPathToWar(String[] args) {
@@ -60,8 +81,7 @@ public class TomEEStandalone {
 		config.setDir(System.getProperty("java.io.tmpdir"));
 		config.setHttpPort(serverPort);
 		config.setStopPort(stopPort);
-		config.setDir(new File(new File("target"), "apache-tomee")
-				.getAbsolutePath());
+		config.setDir(new File(new File("target"), "apache-tomee").getAbsolutePath());
 		return config;
 	}
 
