@@ -49,9 +49,14 @@ public class MockIT {
 	private RequestSpecification given() {
 		RequestSpecification given = RestAssured.given();
 		given.baseUri("http://localhost") //
-		.port(SERVER_PORT) //
-		.basePath("/mockserver");
+				.port(SERVER_PORT) //
+				.basePath("/mockserver");
 		return given;
+	}
+
+	@Test
+	public void checkIfRunning() {
+		assertThat(given().get("/").getStatusCode(), is(STATUS_OK));
 	}
 
 	@Test
@@ -65,12 +70,10 @@ public class MockIT {
 	@Test
 	public void createConfiguration() {
 		MockDto mockDefinition = initMock();
-		ConfigurationDto mockConfiguration = someMockConfiguration(
-				someRequest(METHOD_POST), someResponse());
+		ConfigurationDto mockConfiguration = someMockConfiguration(someRequest(METHOD_POST), someResponse());
 
-		given().contentType("application/json").body(toJson(mockConfiguration))
-		.post(mockDefinition.getConfigurationUrl()) //
-		.then().statusCode(is(STATUS_OK));
+		given().contentType("application/json").body(toJson(mockConfiguration)).post(mockDefinition.getConfigurationUrl()) //
+				.then().statusCode(is(STATUS_OK));
 	}
 
 	private String toJson(Object object) {
@@ -83,8 +86,7 @@ public class MockIT {
 		MockDto mock = initMock();
 		RequestDto request = someRequest(METHOD_POST);
 		ResponseDto response = someResponse();
-		ConfigurationDto mockConfiguration = someMockConfiguration(request,
-				response);
+		ConfigurationDto mockConfiguration = someMockConfiguration(request, response);
 
 		configureRequestAndResponse(mock, mockConfiguration);
 
@@ -98,8 +100,7 @@ public class MockIT {
 		requestWithPattern.setUrl(".+/url");
 		ResponseDto response = someResponse();
 
-		ConfigurationDto mockConfiguration = someMockConfiguration(
-				requestWithPattern, response);
+		ConfigurationDto mockConfiguration = someMockConfiguration(requestWithPattern, response);
 		configureRequestAndResponse(mock, mockConfiguration);
 
 		RequestDto request = someRequest(METHOD_POST);
@@ -112,8 +113,7 @@ public class MockIT {
 		MockDto mock = initMock();
 		RequestDto request = someRequest(METHOD_POST);
 		ResponseDto response = someResponse();
-		ConfigurationDto mockConfiguration = someMockConfiguration(request,
-				response);
+		ConfigurationDto mockConfiguration = someMockConfiguration(request, response);
 
 		configureRequestAndResponse(mock, mockConfiguration);
 
@@ -127,8 +127,7 @@ public class MockIT {
 		MockDto mock = initMock();
 		RequestDto request = someRequest(METHOD_GET);
 		ResponseDto response = someResponse();
-		ConfigurationDto mockConfiguration = someMockConfiguration(request,
-				response);
+		ConfigurationDto mockConfiguration = someMockConfiguration(request, response);
 
 		configureRequestAndResponse(mock, mockConfiguration);
 
@@ -141,8 +140,7 @@ public class MockIT {
 		RequestDto request = someRequest(METHOD_GET);
 		ResponseDto response = someResponse();
 		response.setPayload(Base64.encodeBase64String(longString().getBytes()));
-		ConfigurationDto mockConfiguration = someMockConfiguration(request,
-				response);
+		ConfigurationDto mockConfiguration = someMockConfiguration(request, response);
 
 		configureRequestAndResponse(mock, mockConfiguration);
 
@@ -157,11 +155,9 @@ public class MockIT {
 	public void replayBinaryData() throws Exception {
 		MockDto mock = initMock();
 		RequestDto request = someRequest(METHOD_GET);
-		ResponseDto response = response().contentType("application/pdf")
-				.payload(getByteArray("src/test/resources/mock.pdf")).build();
+		ResponseDto response = response().contentType("application/pdf").payload(getByteArray("src/test/resources/mock.pdf")).build();
 
-		ConfigurationDto mockConfiguration = someMockConfiguration(request,
-				response);
+		ConfigurationDto mockConfiguration = someMockConfiguration(request, response);
 
 		configureRequestAndResponse(mock, mockConfiguration);
 
@@ -183,8 +179,7 @@ public class MockIT {
 		MockDto mock = initMock();
 		RequestDto request = createRequestWithoutContentType();
 		ResponseDto response = someResponse();
-		ConfigurationDto mockConfiguration = someMockConfiguration(request,
-				response);
+		ConfigurationDto mockConfiguration = someMockConfiguration(request, response);
 
 		configureRequestAndResponse(mock, mockConfiguration);
 
@@ -209,8 +204,7 @@ public class MockIT {
 	public void verifyNoCall() {
 		MockDto mock = initMock();
 		RequestDto request = someRequest(METHOD_GET);
-		ConfigurationDto mockConfiguration = someMockConfiguration(request,
-				someResponse());
+		ConfigurationDto mockConfiguration = someMockConfiguration(request, someResponse());
 
 		configureRequestAndResponse(mock, mockConfiguration);
 
@@ -221,8 +215,7 @@ public class MockIT {
 	public void verifyOneCall() {
 		MockDto mock = initMock();
 		RequestDto request = someRequest(METHOD_GET);
-		ConfigurationDto mockConfiguration = someMockConfiguration(request,
-				someResponse());
+		ConfigurationDto mockConfiguration = someMockConfiguration(request, someResponse());
 		configureRequestAndResponse(mock, mockConfiguration);
 
 		doRequest(mock, request);
@@ -235,8 +228,7 @@ public class MockIT {
 		MockDto mock = initMock();
 
 		RequestDto request = someRequest(METHOD_POST);
-		ConfigurationDto mockConfiguration = someMockConfiguration(request,
-				someResponse());
+		ConfigurationDto mockConfiguration = someMockConfiguration(request, someResponse());
 
 		configureRequestAndResponse(mock, mockConfiguration);
 
@@ -247,29 +239,21 @@ public class MockIT {
 		verifyNumberOfCalls(mock, request, 3);
 	}
 
-	private void verifyNumberOfCalls(MockDto mock, RequestDto request,
-			int numberOfCalls) {
-		given().contentType("application/json").body(toJson(request))
-		.post(mock.getVerifyUrl()).then()
-		.body("times", is(numberOfCalls));
+	private void verifyNumberOfCalls(MockDto mock, RequestDto request, int numberOfCalls) {
+		given().contentType("application/json").body(toJson(request)).post(mock.getVerifyUrl()).then().body("times", is(numberOfCalls));
 	}
 
 	private void validateResponse(Response response, ResponseDto responseConfig) {
 		response.then().statusCode(responseConfig.getStatusCode())
 		//
-		.and()
-		.contentType(is(responseConfig.getContentType()))
-		//
-		.and()
-		.body(is(new String(Base64.decodeBase64(responseConfig
-						.getPayload()))));
+				.and().contentType(is(responseConfig.getContentType()))
+				//
+				.and().body(is(new String(Base64.decodeBase64(responseConfig.getPayload()))));
 	}
 
 	private Response doRequest(MockDto mockDefinition, RequestDto request) {
 		String method = request.getMethod();
-		return request(method,
-				mockDefinition.getRequestUrl() + request.getUrl(),
-				request.getContentType());
+		return request(method, mockDefinition.getRequestUrl() + request.getUrl(), request.getContentType());
 	}
 
 	private Response request(String method, String url, String contentType) {
@@ -280,20 +264,15 @@ public class MockIT {
 			return request.post(url);
 		if (method.equals(METHOD_GET))
 			return request.get(url);
-		throw new UnsupportedOperationException("method not supported: "
-				+ method);
+		throw new UnsupportedOperationException("method not supported: " + method);
 	}
 
-	private void configureRequestAndResponse(MockDto mockDefintion,
-			ConfigurationDto mockConfiguration) {
+	private void configureRequestAndResponse(MockDto mockDefintion, ConfigurationDto mockConfiguration) {
 		Gson gson = new Gson();
-		given().contentType("application/json")
-		.body(gson.toJson(mockConfiguration))
-		.post(mockDefintion.getConfigurationUrl());
+		given().contentType("application/json").body(gson.toJson(mockConfiguration)).post(mockDefintion.getConfigurationUrl());
 	}
 
-	private ConfigurationDto someMockConfiguration(RequestDto request,
-			ResponseDto response) {
+	private ConfigurationDto someMockConfiguration(RequestDto request, ResponseDto response) {
 		ConfigurationDto configurationDTO = new ConfigurationDto();
 		configurationDTO.setRequest(request);
 		configurationDTO.setResponse(response);
@@ -301,8 +280,7 @@ public class MockIT {
 	}
 
 	private ResponseDto someResponse() {
-		return response().contentType("application/json").statusCode(200)
-				.payload("{\"result\": \"some response\"}").build();
+		return response().contentType("application/json").statusCode(200).payload("{\"result\": \"some response\"}").build();
 	}
 
 	private RequestDto someRequest(String method) {
@@ -314,21 +292,18 @@ public class MockIT {
 	}
 
 	private MockDto initMock() {
-		return given().contentType("application/json").post("/mock/create")
-				.body().as(MockDto.class);
+		return given().contentType("application/json").post("/mock/create").body().as(MockDto.class);
 	}
 
 	@Test
 	public void deleteMock() {
 		MockDto mock = initMock();
 		RequestDto request = someRequest(METHOD_GET);
-		ConfigurationDto mockConfiguration = someMockConfiguration(request,
-				someResponse());
+		ConfigurationDto mockConfiguration = someMockConfiguration(request, someResponse());
 		configureRequestAndResponse(mock, mockConfiguration);
 
 		given().delete(mock.getUrl());
 
-		assertThat(doRequest(mock, request).statusCode(),
-				is(STATUS_NOT_CONFIGURED));
+		assertThat(doRequest(mock, request).statusCode(), is(STATUS_NOT_CONFIGURED));
 	}
 }

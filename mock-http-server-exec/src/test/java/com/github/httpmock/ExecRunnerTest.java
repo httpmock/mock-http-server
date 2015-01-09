@@ -113,7 +113,9 @@ public class ExecRunnerTest {
 
 		runner.configureServerConfig();
 
+		verify(runner).configureStopPort(document, "54321");
 		verify(serverNode).setAttribute("port", "54321");
+		verify(runner).configureStartPort(document, "12345");
 		verify(connectorNode).setAttribute("port", "12345");
 		verify(runner).saveXml(eq(document), any(File.class));
 	}

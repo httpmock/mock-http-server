@@ -34,7 +34,7 @@ import com.github.httpmock.dto.VerifyResponseDto;
 import com.github.httpmock.request.RequestMatcher;
 
 @Stateless
-@Path("/mock")
+@Path("/")
 public class MockResource {
 
 	@EJB
@@ -43,8 +43,14 @@ public class MockResource {
 	@EJB
 	private RequestMatcher requestMatcher;
 
+	@GET
+	@Path("/")
+	public Response isRunning() {
+		return Response.ok().build();
+	}
+
 	@POST
-	@Path("/create")
+	@Path("/mock/create")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response create() {
 		MockInstance mock = mockService.create();
@@ -63,63 +69,50 @@ public class MockResource {
 	}
 
 	@POST
-	@Path("/{id}/configure")
+	@Path("/mock/{id}/configure")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response configure(@PathParam("id") String id,
-			ConfigurationDto configuration) {
+	public Response configure(@PathParam("id") String id, ConfigurationDto configuration) {
 		MockInstance mock = mockService.findMock(id);
 		mock.addConfiguration(configuration);
 		return Response.ok().build();
 	}
 
 	@POST
-	@Path("/{id}/request/{url : .*}")
-	public Response replayPost(@PathParam("id") String id,
-			@PathParam("url") String url, @Context UriInfo urlInfo,
-			@Context HttpHeaders headers, @Context Request request) {
+	@Path("/mock/{id}/request/{url : .*}")
+	public Response replayPost(@PathParam("id") String id, @PathParam("url") String url, @Context UriInfo urlInfo, @Context HttpHeaders headers, @Context Request request) {
 		return replay(id, url, headers, request);
 	}
 
 	@GET
-	@Path("/{id}/request/{url : .*}")
-	public Response replayGet(@PathParam("id") String id,
-			@PathParam("url") String url, @Context UriInfo urlInfo,
-			@Context HttpHeaders headers, @Context Request request) {
+	@Path("/mock/{id}/request/{url : .*}")
+	public Response replayGet(@PathParam("id") String id, @PathParam("url") String url, @Context UriInfo urlInfo, @Context HttpHeaders headers, @Context Request request) {
 		return replay(id, url, headers, request);
 	}
 
 	@PUT
-	@Path("/{id}/request/{url : .*}")
-	public Response replayPut(@PathParam("id") String id,
-			@PathParam("url") String url, @Context UriInfo urlInfo,
-			@Context HttpHeaders headers, @Context Request request) {
+	@Path("/mock/{id}/request/{url : .*}")
+	public Response replayPut(@PathParam("id") String id, @PathParam("url") String url, @Context UriInfo urlInfo, @Context HttpHeaders headers, @Context Request request) {
 		return replay(id, url, headers, request);
 	}
 
 	@DELETE
-	@Path("/{id}/request/{url : .*}")
-	public Response replayDelete(@PathParam("id") String id,
-			@PathParam("url") String url, @Context UriInfo urlInfo,
-			@Context HttpHeaders headers, @Context Request request) {
+	@Path("/mock/{id}/request/{url : .*}")
+	public Response replayDelete(@PathParam("id") String id, @PathParam("url") String url, @Context UriInfo urlInfo, @Context HttpHeaders headers, @Context Request request) {
 		return replay(id, url, headers, request);
 	}
 
 	@HEAD
-	@Path("/{id}/request/{url : .*}")
-	public Response replayHead(@PathParam("id") String id,
-			@PathParam("url") String url, @Context UriInfo urlInfo,
-			@Context HttpHeaders headers, @Context Request request) {
+	@Path("/mock/{id}/request/{url : .*}")
+	public Response replayHead(@PathParam("id") String id, @PathParam("url") String url, @Context UriInfo urlInfo, @Context HttpHeaders headers, @Context Request request) {
 		return replay(id, url, headers, request);
 	}
 
-	private Response replay(String id, String url, HttpHeaders headers,
-			Request request) {
+	private Response replay(String id, String url, HttpHeaders headers, Request request) {
 		MockInstance mock = mockService.findMock(id);
 		if (mock == null)
 			return notFound();
 
-		ConfigurationDto configuration = findConfiguration(mock,
-				toRequestDto(url, headers, request));
+		ConfigurationDto configuration = findConfiguration(mock, toRequestDto(url, headers, request));
 		if (configuration == null)
 			return notFound();
 
@@ -131,12 +124,10 @@ public class MockResource {
 		return Response.noContent().build();
 	}
 
-	private RequestDto toRequestDto(String url, HttpHeaders headers,
-			Request request) {
+	private RequestDto toRequestDto(String url, HttpHeaders headers, Request request) {
 		MediaType mediaType = headers.getMediaType();
 		String contentType = getContentType(mediaType);
-		return request().method(request.getMethod()).url(url)
-				.contentType(contentType).build();
+		return request().method(request.getMethod()).url(url).contentType(contentType).build();
 	}
 
 	private String getContentType(MediaType mediaType) {
@@ -152,9 +143,7 @@ public class MockResource {
 	}
 
 	private Response toResponse(ResponseDto response) {
-		ResponseBuilder replayResponse = Response.status(
-				response.getStatusCode()).entity(
-				decodePayload(response.getPayload()));
+		ResponseBuilder replayResponse = Response.status(response.getStatusCode()).entity(decodePayload(response.getPayload()));
 		addHeaders(response, replayResponse);
 		return replayResponse.build();
 	}
@@ -170,12 +159,10 @@ public class MockResource {
 		return Base64.decodeBase64(payload);
 	}
 
-	private ConfigurationDto findConfiguration(MockInstance mock,
-			RequestDto requestDto) {
+	private ConfigurationDto findConfiguration(MockInstance mock, RequestDto requestDto) {
 		List<ConfigurationDto> configurations = mock.getConfigurations();
 		for (ConfigurationDto configurationDto : configurations) {
-			if (requestMatcher.matches(configurationDto.getRequest(),
-					requestDto)) {
+			if (requestMatcher.matches(configurationDto.getRequest(), requestDto)) {
 				return configurationDto;
 			}
 		}
@@ -185,20 +172,19 @@ public class MockResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{id}/verify")
+	@Path("/mock/{id}/verify")
 	public Response verify(@PathParam("id") String id, RequestDto request) {
 		MockInstance mock = mockService.findMock(id);
 		ConfigurationDto configuration = findConfiguration(mock, request);
 
 		VerifyResponseDto verifyResponseDto = new VerifyResponseDto();
 		if (configuration != null)
-			verifyResponseDto
-					.setTimes(mock.getCount(configuration.getRequest()));
+			verifyResponseDto.setTimes(mock.getCount(configuration.getRequest()));
 		return Response.ok(verifyResponseDto).build();
 	}
 
 	@DELETE
-	@Path("/{id}")
+	@Path("/mock/{id}")
 	public Response delete(@PathParam("id") String id) {
 		mockService.delete(id);
 		return Response.ok().build();

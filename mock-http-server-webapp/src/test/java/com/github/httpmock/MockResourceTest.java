@@ -58,6 +58,13 @@ public class MockResourceTest {
 	}
 
 	@Test
+	public void isUpAndRunning() throws Exception {
+		Response response = mockResource.isRunning();
+
+		assertThat(response.getStatus(), is(200));
+	}
+
+	@Test
 	public void createMock() throws Exception {
 		Response response = mockResource.create();
 
@@ -90,8 +97,7 @@ public class MockResourceTest {
 		Response replayedResponse = replayUrl(requestDto);
 
 		assertThat(replayedResponse, is(notNullValue()));
-		assertThat(replayedResponse.getEntity(),
-				is((Object) responseDto.getPayload()));
+		assertThat(replayedResponse.getEntity(), is((Object) responseDto.getPayload()));
 	}
 
 	@Test
@@ -120,17 +126,14 @@ public class MockResourceTest {
 		HttpHeaders headers = mock(HttpHeaders.class);
 		mockContentTypeHeaders(headers, requestDto);
 
-		return mockResource.replayPost(ID, requestDto.getUrl(), null, headers,
-				request);
+		return mockResource.replayPost(ID, requestDto.getUrl(), null, headers, request);
 	}
 
-	private void mockContentTypeHeaders(HttpHeaders headers,
-			RequestDto requestDto) {
+	private void mockContentTypeHeaders(HttpHeaders headers, RequestDto requestDto) {
 		if (requestDto.getContentType() == null)
 			when(headers.getMediaType()).thenReturn(null);
 		else
-			when(headers.getMediaType()).thenReturn(
-					MediaType.valueOf(requestDto.getContentType()));
+			when(headers.getMediaType()).thenReturn(MediaType.valueOf(requestDto.getContentType()));
 	}
 
 	@Test
@@ -149,25 +152,20 @@ public class MockResourceTest {
 	@Test
 	public void replayWithContentType() throws Exception {
 		RequestDto requestDto = someRequest();
-		ResponseDto responseDto = response().contentType("some/mediatype")
-				.build();
+		ResponseDto responseDto = response().contentType("some/mediatype").build();
 		configureRequestAndResponse(requestDto, responseDto);
 
 		Response replayedResponse = replayUrl(requestDto);
 
 		assertThat(replayedResponse, is(notNullValue()));
-		assertThat(replayedResponse.getHeaders().containsKey("Content-Type"),
-				is(true));
-		assertThat(replayedResponse.getMediaType().toString(),
-				is("some/mediatype"));
+		assertThat(replayedResponse.getHeaders().containsKey("Content-Type"), is(true));
+		assertThat(replayedResponse.getMediaType().toString(), is("some/mediatype"));
 	}
 
 	@Test
 	public void replayRequestWithContentType() throws Exception {
-		RequestDto requestDto = request().get(URL)
-				.contentType("application/json").build();
-		RequestDto incommingRequest = request().get(URL)
-				.contentType("application/json").build();
+		RequestDto requestDto = request().get(URL).contentType("application/json").build();
+		RequestDto incommingRequest = request().get(URL).contentType("application/json").build();
 
 		ResponseDto responseDto = response().build();
 		configureRequestAndResponse(requestDto, responseDto);
@@ -180,10 +178,8 @@ public class MockResourceTest {
 
 	@Test
 	public void replayRequestWithContentTypeWithCharset() throws Exception {
-		RequestDto requestDto = request().get(URL)
-				.contentType("application/json").build();
-		RequestDto incommingRequest = request().get(URL)
-				.contentType("application/json;charset=ISO-8859-1").build();
+		RequestDto requestDto = request().get(URL).contentType("application/json").build();
+		RequestDto incommingRequest = request().get(URL).contentType("application/json;charset=ISO-8859-1").build();
 
 		ResponseDto responseDto = response().build();
 		configureRequestAndResponse(requestDto, responseDto);
@@ -209,8 +205,7 @@ public class MockResourceTest {
 	@Test
 	public void replayWithHeaders() throws Exception {
 		RequestDto requestDto = someRequest();
-		ResponseDto responseDto = response().header("a", "b").header("c", "d")
-				.build();
+		ResponseDto responseDto = response().header("a", "b").header("c", "d").build();
 		configureRequestAndResponse(requestDto, responseDto);
 
 		Response replayedResponse = replayUrl(requestDto);
@@ -224,8 +219,7 @@ public class MockResourceTest {
 	public void replayNotMatchingUrl() throws Exception {
 		RequestDto requestDto = someRequest();
 		ResponseDto responseDto = response().build();
-		configureRequestAndResponse(request().get("other/url").build(),
-				responseDto);
+		configureRequestAndResponse(request().get("other/url").build(), responseDto);
 
 		Response replayedResponse = replayUrl(requestDto);
 
@@ -265,31 +259,24 @@ public class MockResourceTest {
 		HttpHeaders headers = mock(HttpHeaders.class);
 		mockContentTypeHeaders(headers, requestDto);
 
-		Response replayPost = mockResource.replayPost(ID, requestDto.getUrl(),
-				null, headers, request);
+		Response replayPost = mockResource.replayPost(ID, requestDto.getUrl(), null, headers, request);
 		assertThat(replayPost.getStatus(), is(STATUS_OK));
-		assertEqualResponses(mockResource.replayGet(ID, requestDto.getUrl(),
-				null, headers, request), replayPost);
-		assertEqualResponses(mockResource.replayPut(ID, requestDto.getUrl(),
-				null, headers, request), replayPost);
-		assertEqualResponses(mockResource.replayHead(ID, requestDto.getUrl(),
-				null, headers, request), replayPost);
-		assertEqualResponses(mockResource.replayDelete(ID, requestDto.getUrl(),
-				null, headers, request), replayPost);
+		assertEqualResponses(mockResource.replayGet(ID, requestDto.getUrl(), null, headers, request), replayPost);
+		assertEqualResponses(mockResource.replayPut(ID, requestDto.getUrl(), null, headers, request), replayPost);
+		assertEqualResponses(mockResource.replayHead(ID, requestDto.getUrl(), null, headers, request), replayPost);
+		assertEqualResponses(mockResource.replayDelete(ID, requestDto.getUrl(), null, headers, request), replayPost);
 	}
 
 	@Test
 	public void replayWithGetParameters() throws Exception {
-		RequestDto requestDto = request().post(URL + "?var=value&var2=value2")
-				.build();
+		RequestDto requestDto = request().post(URL + "?var=value&var2=value2").build();
 		ResponseDto responseDto = response().build();
 		configureRequestAndResponse(requestDto, responseDto);
 		when(request.getMethod()).thenReturn(requestDto.getMethod());
 		HttpHeaders headers = mock(HttpHeaders.class);
 		mockContentTypeHeaders(headers, requestDto);
 
-		Response replayResponse = mockResource.replayPost(ID,
-				requestDto.getUrl(), null, headers, request);
+		Response replayResponse = mockResource.replayPost(ID, requestDto.getUrl(), null, headers, request);
 
 		assertThat(replayResponse.getStatus(), is(STATUS_OK));
 	}
@@ -301,8 +288,7 @@ public class MockResourceTest {
 		assertThat(response.getStatus(), is(STATUS_OK));
 	}
 
-	private void assertEqualResponses(Response response,
-			Response expectedResponse) {
+	private void assertEqualResponses(Response response, Response expectedResponse) {
 		assertThat(response.getEntity(), is(expectedResponse.getEntity()));
 		assertThat(response.getStatus(), is(expectedResponse.getStatus()));
 		assertThat(response.getHeaders(), is(expectedResponse.getHeaders()));
@@ -316,11 +302,9 @@ public class MockResourceTest {
 		return request().get(URL).build();
 	}
 
-	private MockInstance configureRequestAndResponse(RequestDto requestDto,
-			ResponseDto responseDto) {
+	private MockInstance configureRequestAndResponse(RequestDto requestDto, ResponseDto responseDto) {
 		MockInstance mock = createFakeMock();
-		ConfigurationDto configuration = new ConfigurationDto(requestDto,
-				responseDto);
+		ConfigurationDto configuration = new ConfigurationDto(requestDto, responseDto);
 		mock.addConfiguration(configuration);
 		when(requestMatcher.matches(requestDto, requestDto)).thenReturn(true);
 		return mock;
