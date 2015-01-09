@@ -67,10 +67,18 @@ public class ExecRunner {
 		File serverXml = new File(getDistrubtionDirectory(), "conf/server.xml");
 		Document doc = getServerXmlDocument(serverXml);
 
-		configurePortForProtocol(doc, getStartupPort(), "HTTP/1.1");
-		configurePortForElementsInXpath(doc, getStopPort(), "/Server");
+		configureStartPort(doc, getStartupPort());
+		configureStopPort(doc, getStopPort());
 
 		saveXml(doc, serverXml);
+	}
+
+	void configureStopPort(Document doc, String stopPort) throws XPathExpressionException {
+		configurePortForElementsInXpath(doc, stopPort, "/Server");
+	}
+
+	void configureStartPort(Document doc, String port) throws XPathExpressionException {
+		configurePortForProtocol(doc, port, "HTTP/1.1");
 	}
 
 	Document getServerXmlDocument(File serverXml) throws SAXException, IOException, ParserConfigurationException {
