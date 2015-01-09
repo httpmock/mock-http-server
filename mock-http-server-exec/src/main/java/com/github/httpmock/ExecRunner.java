@@ -65,7 +65,7 @@ public class ExecRunner {
 
 	void configureServerConfig() throws SAXException, IOException, ParserConfigurationException, TransformerException, XPathExpressionException {
 		File serverXml = new File(getDistrubtionDirectory(), "conf/server.xml");
-		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(serverXml.getAbsolutePath()));
+		Document doc = getServerXmlDocument(serverXml);
 
 		configurePortForProtocol(doc, getStartupPort(), "HTTP/1.1");
 		configurePortForElementsInXpath(doc, getStopPort(), "/Server");
@@ -73,7 +73,11 @@ public class ExecRunner {
 		saveXml(doc, serverXml);
 	}
 
-	private void saveXml(Document doc, File serverXml) throws TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException {
+	Document getServerXmlDocument(File serverXml) throws SAXException, IOException, ParserConfigurationException {
+		return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(serverXml.getAbsolutePath()));
+	}
+
+	void saveXml(Document doc, File serverXml) throws TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException {
 		Transformer xformer = TransformerFactory.newInstance().newTransformer();
 		xformer.transform(new DOMSource(doc), new StreamResult(serverXml));
 	}
@@ -84,12 +88,15 @@ public class ExecRunner {
 	}
 
 	private void configurePortForElementsInXpath(Document doc, String port, String xmlPathFormat) throws XPathExpressionException {
-		XPath xpath = XPathFactory.newInstance().newXPath();
-		NodeList nodes = (NodeList) xpath.evaluate(xmlPathFormat, doc, XPathConstants.NODESET);
+		NodeList nodes = (NodeList) xpath().evaluate(xmlPathFormat, doc, XPathConstants.NODESET);
 		for (int idx = 0; idx < nodes.getLength(); idx++) {
 			Element element = (Element) nodes.item(idx);
 			element.setAttribute("port", port);
 		}
+	}
+
+	XPath xpath() {
+		return XPathFactory.newInstance().newXPath();
 	}
 
 	private static ClassLoader getClassLoader() {

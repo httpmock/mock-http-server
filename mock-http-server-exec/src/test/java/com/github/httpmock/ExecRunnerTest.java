@@ -1,25 +1,24 @@
 package com.github.httpmock;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.openejb.config.RemoteServer;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +28,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecRunnerTest {
@@ -46,6 +45,9 @@ public class ExecRunnerTest {
 	private Properties properties;
 
 	private ExecRunner runner;
+
+	@Mock
+	private Document document;
 
 	@Before
 	public void setup() {
@@ -92,21 +94,36 @@ public class ExecRunnerTest {
 
 	@Test
 	public void configureServerConfig() throws Exception {
-		FileUtils.copyDirectoryToDirectory(new File("src/test/resources/tomee"), new File("target/test/resources"));
 		when(runner.getStartupPort()).thenReturn("12345");
 		when(runner.getStopPort()).thenReturn("54321");
+		doReturn(document).when(runner).getServerXmlDocument(any(File.class));
+		doNothing().when(runner).saveXml(eq(document), any(File.class));
+
+		XPath xpath = mock(XPath.class);
+		doReturn(xpath).when(runner).xpath();
+		Element serverNode = mock(Element.class);
+		NodeList serverNodes = mockXmlNodes(serverNode);
+		Element connectorNode = mock(Element.class);
+		NodeList connectorNodes = mockXmlNodes(connectorNode);
+		when(xpath.evaluate("/Server", document, XPathConstants.NODESET)).thenReturn(serverNodes);
+		when(xpath.evaluate("//Connector[@protocol='HTTP/1.1']", document, XPathConstants.NODESET)).thenReturn(connectorNodes);
 
 		runner.configureServerConfig();
 
-		Document document = getServerXmlDocument();
-		assertThat(document, hasXPath("/Server[@port='54321']"));
-		assertThat(document, hasXPath("//Connector[@port='12345' and @protocol='HTTP/1.1']"));
+		verify(serverNode).setAttribute("port", "54321");
+		verify(connectorNode).setAttribute("port", "12345");
+		verify(runner).saveXml(eq(document), any(File.class));
 	}
 
-	private Document getServerXmlDocument() throws SAXException, IOException, ParserConfigurationException {
-		return DocumentBuilderFactory.newInstance()//
-				.newDocumentBuilder()//
-				.parse(new InputSource("target/test/resources/tomee/conf/server.xml"));
+	private NodeList mockXmlNodes(Element... elements) {
+		NodeList nodeList = mock(NodeList.class);
+		when(nodeList.getLength()).thenReturn(elements.length);
+		int index = 0;
+		for (Element element : elements) {
+			when(nodeList.item(index)).thenReturn(element);
+			index++;
+		}
+		return nodeList;
 	}
 
 	@Test
