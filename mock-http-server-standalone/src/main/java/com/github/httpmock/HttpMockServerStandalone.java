@@ -42,7 +42,7 @@ public class HttpMockServerStandalone {
 		return httpPort;
 	}
 
-	private static String getPathToWar(String[] args) {
+	static String getPathToWar(String[] args) {
 		int firstArgument = 0;
 		if (args.length > firstArgument)
 			return args[firstArgument];

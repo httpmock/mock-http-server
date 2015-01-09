@@ -89,6 +89,12 @@ public class HttpMockServerStandaloneTest {
 	}
 
 	@Test
+	public void waitUnitlStop() throws Exception {
+		tomee.waitUntilStop();
+		verify(container).await();
+	}
+
+	@Test
 	public void defaultStartPort() throws Exception {
 		assertThat(HttpMockServerStandalone.getConfiguredHttpPort(), is(9090));
 	}
@@ -96,5 +102,16 @@ public class HttpMockServerStandaloneTest {
 	@Test
 	public void defaultStopPort() throws Exception {
 		assertThat(HttpMockServerStandalone.getConfiguredStopPort(), is(9099));
+	}
+
+	@Test
+	public void httpPort() throws Exception {
+		assertThat(tomee.getHttpPort(), is(SERVER_PORT));
+	}
+
+	@Test
+	public void pathToWar() throws Exception {
+		assertThat(HttpMockServerStandalone.getPathToWar(new String[] {}), is("target/wars/mockserver.war"));
+		assertThat(HttpMockServerStandalone.getPathToWar(new String[] { "pathtowar" }), is("pathtowar"));
 	}
 }
