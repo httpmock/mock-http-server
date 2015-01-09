@@ -14,7 +14,7 @@
 	<scm>
 		<url>https://github.com/httpmock/mock-http-server</url>
 		<connection>scm:git:git@github.com:httpmock/mock-http-server.git</connection>
-		<tag>mock-http-server-1.1.3</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<developers>
 		<developer>
@@ -27,7 +27,7 @@
 	<parent>
 		<groupId>com.github.httpmock</groupId>
 		<artifactId>mock-http-server</artifactId>
-		<version>1.1.3</version>
+		<version>1.1.4-SNAPSHOT</version>
 	</parent>
 
 	<properties>
