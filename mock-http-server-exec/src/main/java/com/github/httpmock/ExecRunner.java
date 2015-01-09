@@ -35,8 +35,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class ExecRunner {
-	private static final String PROPERTY_WORKING_DIR = "workingDir";
-	private static final String PROPERTY_DISTRIBUTION = "distribution";
+	private static final String PROPERTY_ADDITIONAL_SYSTEM_PROPERTIES = "additionalSystemProperties";
+	public static final String PROPERTY_WORKING_DIR = "workingDir";
+	public static final String PROPERTY_DISTRIBUTION = "distribution";
 	private static final String UTF_8 = "UTF-8";
 	private static final String CONFIGURATION_PROPERTIES = "configuration.properties";
 
@@ -44,16 +45,26 @@ public class ExecRunner {
 	private static final String PORT_HTTP_DEFAULT = "9090";
 	private static final String ENV_HTTP_PORT = "HTTP_MOCK_SERVER_PORT_HTTP";
 	private static final String ENV_STOP_PORT = "HTTP_MOCK_SERVER_PORT_STOP";
+	private Properties config;
+
+	public ExecRunner(Properties config) {
+		this.config = config;
+	}
 
 	public static void main(String[] args) throws Exception {
 		Properties config = readConfiguration();
-		createDistributionFolderIfNecessary(config);
-		configureServerConfig(config);
-		startServer(config);
+		ExecRunner runner = new ExecRunner(config);
+		runner.run();
 	}
 
-	private static void configureServerConfig(Properties config) throws SAXException, IOException, ParserConfigurationException, TransformerException, XPathExpressionException {
-		File serverXml = new File(getDistrubtionDirectory(config), "conf/server.xml");
+	void run() throws Exception {
+		createDistributionFolderIfNecessary();
+		configureServerConfig();
+		startServer();
+	}
+
+	void configureServerConfig() throws SAXException, IOException, ParserConfigurationException, TransformerException, XPathExpressionException {
+		File serverXml = new File(getDistrubtionDirectory(), "conf/server.xml");
 		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(serverXml.getAbsolutePath()));
 
 		configurePortForProtocol(doc, getStartupPort(), "HTTP/1.1");
@@ -62,17 +73,17 @@ public class ExecRunner {
 		saveXml(doc, serverXml);
 	}
 
-	private static void saveXml(Document doc, File serverXml) throws TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException {
+	private void saveXml(Document doc, File serverXml) throws TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException {
 		Transformer xformer = TransformerFactory.newInstance().newTransformer();
 		xformer.transform(new DOMSource(doc), new StreamResult(serverXml));
 	}
 
-	private static void configurePortForProtocol(Document doc, String port, String protocol) throws XPathExpressionException {
+	private void configurePortForProtocol(Document doc, String port, String protocol) throws XPathExpressionException {
 		String xmlPathFormat = String.format("//Connector[@protocol='%s']", protocol);
 		configurePortForElementsInXpath(doc, port, xmlPathFormat);
 	}
 
-	private static void configurePortForElementsInXpath(Document doc, String port, String xmlPathFormat) throws XPathExpressionException {
+	private void configurePortForElementsInXpath(Document doc, String port, String xmlPathFormat) throws XPathExpressionException {
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		NodeList nodes = (NodeList) xpath.evaluate(xmlPathFormat, doc, XPathConstants.NODESET);
 		for (int idx = 0; idx < nodes.getLength(); idx++) {
@@ -100,66 +111,75 @@ public class ExecRunner {
 		return config;
 	}
 
-	private static void createDistributionFolderIfNecessary(final Properties config) throws IOException {
-		File distribOutput = getDistrubtionDirectory(config);
-		File timestampFile = getTimestampFile(config);
+	void createDistributionFolderIfNecessary() throws IOException {
+		File distribOutput = getDistrubtionDirectory();
+		File timestampFile = getTimestampFile();
 		boolean forceDelete = Boolean.getBoolean("tomee.runner.force-delete");
-		if (forceDelete || !timestampFile.exists() || isUpdateRequired(config)) {
+		if (forceDelete || !timestampFile.exists() || isUpdateRequired()) {
 			if (forceDelete || timestampFile.exists()) {
 				System.out.println("Deleting " + distribOutput.getAbsolutePath());
 				Files.delete(distribOutput);
 			}
-			extractApplicationServer(config, distribOutput);
-			writeTimestamp(config);
+			extractApplicationServer(distribOutput);
+			writeTimestamp();
 		}
 	}
 
-	private static void writeTimestamp(final Properties config) throws IOException {
-		File timestampFile = getTimestampFile(config);
-		IO.writeString(timestampFile, config.getProperty("timestamp", Long.toString(System.currentTimeMillis())));
+	void writeTimestamp() throws IOException {
+		File timestampFile = getTimestampFile();
+		String currentTime = Long.toString(System.currentTimeMillis());
+		IO.writeString(timestampFile, config.getProperty("timestamp", currentTime));
 	}
 
-	private static boolean isUpdateRequired(final Properties config) throws IOException {
-		File timestampFile = getTimestampFile(config);
-		return getTimestampFromFile(timestampFile) < getTimestampFromConfig(config);
+	private boolean isUpdateRequired() throws IOException {
+		File timestampFile = getTimestampFile();
+		return getTimestampFromFile(timestampFile) < getTimestampFromConfig();
 	}
 
-	private static long getTimestampFromConfig(final Properties config) {
+	private long getTimestampFromConfig() {
 		return Long.parseLong(config.getProperty("timestamp"));
 	}
 
-	private static long getTimestampFromFile(File timestampFile) throws IOException {
+	private long getTimestampFromFile(File timestampFile) throws IOException {
 		return Long.parseLong(IO.slurp(timestampFile).replace(System.getProperty("line.separator"), ""));
 	}
 
-	private static File getTimestampFile(Properties config) {
-		File distribOutput = getDistrubtionDirectory(config);
+	private File getTimestampFile() {
+		File distribOutput = getDistrubtionDirectory();
 		return new File(distribOutput, "timestamp.txt");
 	}
 
-	private static void extractApplicationServer(final Properties config, File distribOutput) throws IOException {
+	private void extractApplicationServer(File distribOutput) throws IOException {
 		String distrib = config.getProperty(PROPERTY_DISTRIBUTION);
+		System.out.println("Extracting tomee to " + distribOutput.getAbsolutePath());
+		unzip(distribOutput, distrib);
+	}
+
+	void unzip(File distribOutput, String distrib) throws IOException {
 		ClassLoader contextClassLoader = getClassLoader();
 		InputStream distribIs = contextClassLoader.getResourceAsStream(distrib);
-		System.out.println("Extracting tomee to " + distribOutput.getAbsolutePath());
 		Zips.unzip(distribIs, distribOutput, false);
 	}
 
-	private static File getDistrubtionDirectory(final Properties config) {
+	private File getDistrubtionDirectory() {
 		return new File(config.getProperty(PROPERTY_WORKING_DIR));
 	}
 
-	private static void startServer(final Properties config) throws InterruptedException {
-		setupSystemProperties(config);
-		RemoteServer server = new RemoteServer();
+	void startServer() throws InterruptedException {
+		setupSystemProperties();
+		RemoteServer server = createRemoteServer();
 		server.setPortStartup(Integer.parseInt(getStartupPort()));
-		setupClassPath(config, server);
-		server.start(getJvmArgs(config), "start", true);
+		setupClassPath(server);
+		server.start(getJvmArgs(), "start", true);
 		server.getServer().waitFor();
 	}
 
-	private static List<String> getJvmArgs(final Properties config) {
-		final String additionalArgs = System.getProperty("additionalSystemProperties");
+	RemoteServer createRemoteServer() {
+		return new RemoteServer();
+	}
+
+	private List<String> getJvmArgs() {
+		final String additionalArgs = System.getProperty(PROPERTY_ADDITIONAL_SYSTEM_PROPERTIES);
 		final List<String> jvmArgs = new LinkedList<String>();
 		if (additionalArgs != null)
 			Collections.addAll(jvmArgs, additionalArgs.split(" "));
@@ -170,27 +190,27 @@ public class ExecRunner {
 		return jvmArgs;
 	}
 
-	private static void setupClassPath(final Properties config, final RemoteServer server) {
+	private void setupClassPath(final RemoteServer server) {
 		if (config.containsKey("additionalClasspath")) {
 			server.setAdditionalClasspath(config.getProperty("additionalClasspath"));
 		}
 	}
 
-	private static void setupSystemProperties(final Properties config) {
-		File distribOutput = getDistrubtionDirectory(config);
+	private void setupSystemProperties() {
+		File distribOutput = getDistrubtionDirectory();
 		System.setProperty("openejb.home", distribOutput.getAbsolutePath());
 		System.setProperty("server.shutdown.port", getStopPort());
 		System.setProperty("server.shutdown.command", config.getProperty("shutdownCommand"));
 	}
 
-	private static String getStartupPort() {
+	String getStartupPort() {
 		String httpPort = PORT_HTTP_DEFAULT;
 		if (System.getenv(ENV_HTTP_PORT) != null)
 			httpPort = System.getenv(ENV_HTTP_PORT);
 		return httpPort;
 	}
 
-	private static String getStopPort() {
+	String getStopPort() {
 		String stopPort = PORT_STOP_DEFAULT;
 		if (System.getenv(ENV_STOP_PORT) != null)
 			stopPort = System.getenv(ENV_STOP_PORT);

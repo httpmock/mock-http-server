@@ -28,14 +28,14 @@ public class HttpMockServerStandalone {
 		mockServer.waitUntilStop();
 	}
 
-	private static int getConfiguredStopPort() {
+	static int getConfiguredStopPort() {
 		int stopPort = PORT_STOP_DEFAULT;
 		if (System.getenv(ENV_STOP_PORT) != null)
 			stopPort = Integer.parseInt(System.getenv(ENV_STOP_PORT));
 		return stopPort;
 	}
 
-	private static int getConfiguredHttpPort() {
+	static int getConfiguredHttpPort() {
 		int httpPort = PORT_HTTP_DEFAULT;
 		if (System.getenv(ENV_HTTP_PORT) != null)
 			httpPort = Integer.parseInt(System.getenv(ENV_HTTP_PORT));

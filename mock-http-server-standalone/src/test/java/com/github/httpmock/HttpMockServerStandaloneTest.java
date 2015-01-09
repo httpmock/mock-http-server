@@ -1,5 +1,6 @@
 package com.github.httpmock;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -80,11 +81,20 @@ public class HttpMockServerStandaloneTest {
 	@Test
 	public void deployError() throws Exception {
 		Throwable exception = mock(IOException.class);
-		Mockito.doThrow(exception).when(container)
-		.deploy(any(String.class), any(File.class));
+		Mockito.doThrow(exception).when(container).deploy(any(String.class), any(File.class));
 
 		expectedException.expect(ServerException.class);
 		expectedException.expectCause(is(exception));
 		tomee.deploy("some.war");
+	}
+
+	@Test
+	public void defaultStartPort() throws Exception {
+		assertThat(HttpMockServerStandalone.getConfiguredHttpPort(), is(9090));
+	}
+
+	@Test
+	public void defaultStopPort() throws Exception {
+		assertThat(HttpMockServerStandalone.getConfiguredStopPort(), is(9099));
 	}
 }
