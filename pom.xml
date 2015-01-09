@@ -34,6 +34,7 @@
 
 	<modules>
 		<module>mock-http-server-dto</module>
+		<module>mock-http-server-exec</module>
 		<module>mock-http-server-webapp</module>
 		<module>mock-http-server-standalone</module>
 		<module>mock-http-server-junit</module>
@@ -87,7 +88,6 @@
 	</dependencies>
 
 	<build>
-		<finalName>mockserver</finalName>
 		<pluginManagement>
 			<plugins>
 				<plugin>

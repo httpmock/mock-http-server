@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>mock-http-server-standalone</artifactId>
+	<artifactId>mock-http-server-exec</artifactId>
 	<packaging>jar</packaging>
-	<description>Mock HTTP Server - Standalone</description>
+	<description>Mock HTTP Server - Executable</description>
 	<url>https://github.com/httpmock/mock-http-server</url>
 	<licenses>
 		<license>
@@ -14,8 +15,8 @@
 	<scm>
 		<url>https://github.com/httpmock/mock-http-server</url>
 		<connection>scm:git:git@github.com:httpmock/mock-http-server.git</connection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 	<developers>
 		<developer>
 			<id>snordquist</id>
@@ -25,22 +26,21 @@
 	</developers>
 
 	<parent>
+		<version>1.1.1-SNAPSHOT</version>
 		<groupId>com.github.httpmock</groupId>
 		<artifactId>mock-http-server</artifactId>
-		<version>1.1.2-SNAPSHOT</version>
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<powermock.version>1.6.0</powermock.version>
+		<tomee-plugin.script>java</tomee-plugin.script>
+		<tomee-plugin.ajp>9009</tomee-plugin.ajp>
+		<tomee-plugin.http>9090</tomee-plugin.http>
+		<tomee-plugin.shutdown>9099</tomee-plugin.shutdown>
+		<tomee-plugin.runner-class>com.github.httpmock.ExecRunner</tomee-plugin.runner-class>
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>mock-http-server-dto</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -52,13 +52,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.openejb</groupId>
-			<artifactId>tomee-embedded</artifactId>
+			<artifactId>tomee-util</artifactId>
 			<version>1.7.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.openejb</groupId>
-			<artifactId>tomee-jaxrs</artifactId>
-			<version>1.7.1</version>
+			<artifactId>openejb-core</artifactId>
+			<version>4.7.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -77,52 +77,10 @@
 			<artifactId>commons-codec</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-			<version>${powermock.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito</artifactId>
-			<version>${powermock.version}</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.9</version>
-				<executions>
-					<execution>
-						<id>copy</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>mock-http-server-webapp</artifactId>
-									<version>${project.version}</version>
-									<type>war</type>
-									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}/wars</outputDirectory>
-									<destFileName>mockserver.war</destFileName>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.build.directory}/wars</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
