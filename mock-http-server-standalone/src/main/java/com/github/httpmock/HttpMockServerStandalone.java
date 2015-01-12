@@ -46,7 +46,7 @@ public class HttpMockServerStandalone {
 		int firstArgument = 0;
 		if (args.length > firstArgument)
 			return args[firstArgument];
-		return "target/wars/mockserver.war";
+		return "wars/mockserver.war";
 	}
 
 	public HttpMockServerStandalone(int serverPort, int stopPort) {

@@ -49,8 +49,8 @@ public class MockIT {
 	private RequestSpecification given() {
 		RequestSpecification given = RestAssured.given();
 		given.baseUri("http://localhost") //
-				.port(SERVER_PORT) //
-				.basePath("/mockserver");
+		.port(SERVER_PORT) //
+		.basePath("/mockserver");
 		return given;
 	}
 
@@ -73,7 +73,7 @@ public class MockIT {
 		ConfigurationDto mockConfiguration = someMockConfiguration(someRequest(METHOD_POST), someResponse());
 
 		given().contentType("application/json").body(toJson(mockConfiguration)).post(mockDefinition.getConfigurationUrl()) //
-				.then().statusCode(is(STATUS_OK));
+		.then().statusCode(is(STATUS_OK));
 	}
 
 	private String toJson(Object object) {
@@ -246,9 +246,9 @@ public class MockIT {
 	private void validateResponse(Response response, ResponseDto responseConfig) {
 		response.then().statusCode(responseConfig.getStatusCode())
 		//
-				.and().contentType(is(responseConfig.getContentType()))
-				//
-				.and().body(is(new String(Base64.decodeBase64(responseConfig.getPayload()))));
+		.and().contentType(is(responseConfig.getContentType()))
+		//
+		.and().body(is(new String(Base64.decodeBase64(responseConfig.getPayload()))));
 	}
 
 	private Response doRequest(MockDto mockDefinition, RequestDto request) {

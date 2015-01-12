@@ -111,7 +111,7 @@ public class HttpMockServerStandaloneTest {
 
 	@Test
 	public void pathToWar() throws Exception {
-		assertThat(HttpMockServerStandalone.getPathToWar(new String[] {}), is("target/wars/mockserver.war"));
+		assertThat(HttpMockServerStandalone.getPathToWar(new String[] {}), is("wars/mockserver.war"));
 		assertThat(HttpMockServerStandalone.getPathToWar(new String[] { "pathtowar" }), is("pathtowar"));
 	}
 }
