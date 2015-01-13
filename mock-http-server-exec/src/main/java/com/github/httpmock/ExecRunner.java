@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class ExecRunner {
+public class ExecRunner extends Thread {
 	private static final String PROPERTY_ADDITIONAL_SYSTEM_PROPERTIES = "additionalSystemProperties";
 	public static final String PROPERTY_WORKING_DIR = "workingDir";
 	public static final String PROPERTY_DISTRIBUTION = "distribution";
@@ -43,34 +43,60 @@ public class ExecRunner {
 
 	private static final String PORT_STOP_DEFAULT = "9099";
 	private static final String PORT_HTTP_DEFAULT = "9090";
+	private static final String ENV_AJP_PORT = "9009";
 	private static final String ENV_HTTP_PORT = "HTTP_MOCK_SERVER_PORT_HTTP";
 	private static final String ENV_STOP_PORT = "HTTP_MOCK_SERVER_PORT_STOP";
+	private static final String PORT_AJP_DEFAULT = "HTTP_MOCK_SERVER_PORT_AJP";
 	private Properties config;
+	private String startPort;
+	private String stopPort;
+	private String ajpPort;
 
-	public ExecRunner(Properties config) {
+	public ExecRunner(Properties config, String startPort, String stopPort, String ajpPort) {
 		this.config = config;
+		this.startPort = startPort;
+		this.stopPort = stopPort;
+		this.ajpPort = ajpPort;
 	}
 
 	public static void main(String[] args) throws Exception {
+		String startPort = getStartupPort();
+		String stopPort = getStopPort();
+		String ajpPort = getAjpPort();
+		if (args.length == 3) {
+			startPort = args[0];
+			stopPort = args[1];
+			ajpPort = args[2];
+		}
 		Properties config = readConfiguration();
-		ExecRunner runner = new ExecRunner(config);
+		ExecRunner runner = new ExecRunner(config, startPort, stopPort, ajpPort);
 		runner.run();
 	}
 
-	void run() throws Exception {
-		createDistributionFolderIfNecessary();
-		configureServerConfig();
-		startServer();
+	@Override
+	public void run() {
+		try {
+			createDistributionFolderIfNecessary();
+			configureServerConfig();
+			startServer();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	void configureServerConfig() throws SAXException, IOException, ParserConfigurationException, TransformerException, XPathExpressionException {
 		File serverXml = new File(getDistrubtionDirectory(), "conf/server.xml");
 		Document doc = getServerXmlDocument(serverXml);
 
-		configureStartPort(doc, getStartupPort());
-		configureStopPort(doc, getStopPort());
+		configureStartPort(doc, startPort);
+		configureStopPort(doc, stopPort);
+		configureAjpPort(doc, ajpPort);
 
 		saveXml(doc, serverXml);
+	}
+
+	void configureAjpPort(Document doc, String port) throws XPathExpressionException {
+		configurePortForProtocol(doc, port, "AJP/1.3");
 	}
 
 	void configureStopPort(Document doc, String stopPort) throws XPathExpressionException {
@@ -111,7 +137,7 @@ public class ExecRunner {
 		return Thread.currentThread().getContextClassLoader();
 	}
 
-	private static Properties readConfiguration() throws IOException, UnsupportedEncodingException {
+	public static Properties readConfiguration() throws IOException, UnsupportedEncodingException {
 		ClassLoader contextClassLoader = getClassLoader();
 		InputStream is = contextClassLoader.getResourceAsStream(CONFIGURATION_PROPERTIES);
 		if (is == null)
@@ -218,17 +244,24 @@ public class ExecRunner {
 		System.setProperty("server.shutdown.command", config.getProperty("shutdownCommand"));
 	}
 
-	String getStartupPort() {
+	static String getStartupPort() {
 		String httpPort = PORT_HTTP_DEFAULT;
 		if (System.getenv(ENV_HTTP_PORT) != null)
 			httpPort = System.getenv(ENV_HTTP_PORT);
 		return httpPort;
 	}
 
-	String getStopPort() {
+	static String getStopPort() {
 		String stopPort = PORT_STOP_DEFAULT;
 		if (System.getenv(ENV_STOP_PORT) != null)
 			stopPort = System.getenv(ENV_STOP_PORT);
+		return stopPort;
+	}
+
+	private static String getAjpPort() {
+		String stopPort = PORT_AJP_DEFAULT;
+		if (System.getenv(ENV_AJP_PORT) != null)
+			stopPort = System.getenv(ENV_AJP_PORT);
 		return stopPort;
 	}
 

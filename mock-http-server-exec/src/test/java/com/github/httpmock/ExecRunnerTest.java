@@ -56,7 +56,7 @@ public class ExecRunnerTest {
 	public void setup() {
 		properties = properties();
 		when(remoteServer.getServer()).thenReturn(serverProcess);
-		runner = spy(new ExecRunner(properties));
+		runner = spy(new ExecRunner(properties, "12345", "54321", "22333"));
 		when(runner.createRemoteServer()).thenReturn(remoteServer);
 	}
 
@@ -97,8 +97,6 @@ public class ExecRunnerTest {
 
 	@Test
 	public void configureServerConfig() throws Exception {
-		when(runner.getStartupPort()).thenReturn("12345");
-		when(runner.getStopPort()).thenReturn("54321");
 		doReturn(document).when(runner).getServerXmlDocument(any(File.class));
 		doNothing().when(runner).saveXml(eq(document), any(File.class));
 
@@ -110,6 +108,7 @@ public class ExecRunnerTest {
 		NodeList connectorNodes = mockXmlNodes(connectorNode);
 		when(xpath.evaluate("/Server", document, XPathConstants.NODESET)).thenReturn(serverNodes);
 		when(xpath.evaluate("//Connector[@protocol='HTTP/1.1']", document, XPathConstants.NODESET)).thenReturn(connectorNodes);
+		when(xpath.evaluate("//Connector[@protocol='AJP/1.3']", document, XPathConstants.NODESET)).thenReturn(connectorNodes);
 
 		runner.configureServerConfig();
 
@@ -117,6 +116,8 @@ public class ExecRunnerTest {
 		verify(serverNode).setAttribute("port", "54321");
 		verify(runner).configureStartPort(document, "12345");
 		verify(connectorNode).setAttribute("port", "12345");
+		verify(runner).configureAjpPort(document, "22333");
+		verify(connectorNode).setAttribute("port", "22333");
 		verify(runner).saveXml(eq(document), any(File.class));
 	}
 
@@ -132,6 +133,17 @@ public class ExecRunnerTest {
 	}
 
 	@Test
+	public void configureAjpPort() throws Exception {
+		Document document = DocumentBuilderFactory.newInstance()//
+				.newDocumentBuilder()//
+				.parse(new ByteArrayInputStream(fakeServerConfig().getBytes()));
+
+		runner.configureAjpPort(document, "12345");
+
+		assertThat(document, hasXPath("//Connector[@protocol='AJP/1.3' and @port='12345']"));
+	}
+
+	@Test
 	public void configureStopPort() throws Exception {
 		Document document = DocumentBuilderFactory.newInstance()//
 				.newDocumentBuilder()//
@@ -143,7 +155,7 @@ public class ExecRunnerTest {
 	}
 
 	private String fakeServerConfig() {
-		return "<Server port=\"8000\"><Connector port=\"8080\" protocol=\"HTTP/1.1\"/></Server>";
+		return "<Server port=\"8000\"><Connector port=\"8080\" protocol=\"HTTP/1.1\"/><Connector port=\"8086\" protocol=\"AJP/1.3\"/></Server>";
 	}
 
 	private NodeList mockXmlNodes(Element... elements) {

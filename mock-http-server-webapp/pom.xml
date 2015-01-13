@@ -190,6 +190,7 @@
 						<webapp>${project.groupId}:${project.artifactId}:${project.version}?name=mockserver</webapp>
 					</webapps>
 					<args>-Xmx512m -XX:PermSize=256m</args>
+					<classifier>standalone</classifier>
 				</configuration>
 			</plugin>
 			<plugin>
