@@ -78,7 +78,6 @@ public class HttpMockServerStandalone {
 
 	private Configuration createConfiguration() {
 		final Configuration config = new Configuration();
-		config.setDir(System.getProperty("java.io.tmpdir"));
 		config.setHttpPort(serverPort);
 		config.setStopPort(stopPort);
 		config.setDir(new File(new File("target"), "apache-tomee").getAbsolutePath());
@@ -89,7 +88,7 @@ public class HttpMockServerStandalone {
 		container.stop();
 	}
 
-	void waitUntilStop() {
+	public void waitUntilStop() {
 		Runtime.getRuntime().addShutdownHook(new ShutdownHook(container));
 		container.await();
 	}
