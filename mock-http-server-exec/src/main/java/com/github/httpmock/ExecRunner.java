@@ -34,19 +34,19 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class ExecRunner extends Thread {
+public class ExecRunner implements Runnable {
 	private static final String PROPERTY_ADDITIONAL_SYSTEM_PROPERTIES = "additionalSystemProperties";
 	public static final String PROPERTY_WORKING_DIR = "workingDir";
 	public static final String PROPERTY_DISTRIBUTION = "distribution";
 	private static final String UTF_8 = "UTF-8";
 	private static final String CONFIGURATION_PROPERTIES = "configuration.properties";
 
-	private static final String PORT_STOP_DEFAULT = "9099";
-	private static final String PORT_HTTP_DEFAULT = "9090";
-	private static final String ENV_AJP_PORT = "9009";
+	private static final int PORT_STOP_DEFAULT = 9099;
+	private static final int PORT_HTTP_DEFAULT = 9090;
+	private static final int PORT_AJP_DEFAULT = 9009;
 	private static final String ENV_HTTP_PORT = "HTTP_MOCK_SERVER_PORT_HTTP";
 	private static final String ENV_STOP_PORT = "HTTP_MOCK_SERVER_PORT_STOP";
-	private static final String PORT_AJP_DEFAULT = "HTTP_MOCK_SERVER_PORT_AJP";
+	private static final String ENV_AJP_PORT = "HTTP_MOCK_SERVER_PORT_AJP";
 	private Properties properties;
 	private String startPort;
 	private String stopPort;
@@ -65,16 +65,21 @@ public class ExecRunner extends Thread {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String startPort = getStartupPort();
-		String stopPort = getStopPort();
-		String ajpPort = getAjpPort();
-		if (args.length == 3) {
-			startPort = args[0];
-			stopPort = args[1];
-			ajpPort = args[2];
-		}
-		ExecRunner runner = new ExecRunner(readProperties(), startPort, stopPort, ajpPort);
+		ExecRunner runner = new ExecRunner(getConfig(args), readProperties());
 		runner.run();
+	}
+
+	public static Configuration getConfig(String[] args) {
+		ConfigurationBuilder configBuilder = ConfigurationBuilder.config()//
+				.httpPort(getHttpPort())//
+				.stopPort(getStopPort())//
+				.ajpPort(getAjpPort());
+		if (args.length == 3) {
+			configBuilder.httpPort(Integer.parseInt(args[0]))//
+			.stopPort(Integer.parseInt(args[1]))//
+			.ajpPort(Integer.parseInt(args[2]));
+		}
+		return configBuilder.build();
 	}
 
 	@Override
@@ -221,7 +226,7 @@ public class ExecRunner extends Thread {
 	void startServer() throws InterruptedException {
 		setupSystemProperties();
 		RemoteServer server = createRemoteServer();
-		server.setPortStartup(Integer.parseInt(getStartupPort()));
+		server.setPortStartup(getHttpPort());
 		setupClassPath(server);
 		server.start(getJvmArgs(), "start", true);
 		server.getServer().waitFor();
@@ -252,28 +257,28 @@ public class ExecRunner extends Thread {
 	private void setupSystemProperties() {
 		File distribOutput = getDistrubtionDirectory();
 		System.setProperty("openejb.home", distribOutput.getAbsolutePath());
-		System.setProperty("server.shutdown.port", getStopPort());
+		System.setProperty("server.shutdown.port", getStopPort().toString());
 		System.setProperty("server.shutdown.command", properties.getProperty("shutdownCommand"));
 	}
 
-	static String getStartupPort() {
-		String httpPort = PORT_HTTP_DEFAULT;
+	static Integer getHttpPort() {
+		int httpPort = PORT_HTTP_DEFAULT;
 		if (System.getenv(ENV_HTTP_PORT) != null)
-			httpPort = System.getenv(ENV_HTTP_PORT);
+			httpPort = Integer.parseInt(System.getenv(ENV_HTTP_PORT));
 		return httpPort;
 	}
 
-	static String getStopPort() {
-		String stopPort = PORT_STOP_DEFAULT;
+	static Integer getStopPort() {
+		int stopPort = PORT_STOP_DEFAULT;
 		if (System.getenv(ENV_STOP_PORT) != null)
-			stopPort = System.getenv(ENV_STOP_PORT);
+			stopPort = Integer.parseInt(System.getenv(ENV_STOP_PORT));
 		return stopPort;
 	}
 
-	private static String getAjpPort() {
-		String stopPort = PORT_AJP_DEFAULT;
+	private static Integer getAjpPort() {
+		int stopPort = PORT_AJP_DEFAULT;
 		if (System.getenv(ENV_AJP_PORT) != null)
-			stopPort = System.getenv(ENV_AJP_PORT);
+			stopPort = Integer.parseInt(System.getenv(ENV_AJP_PORT));
 		return stopPort;
 	}
 

@@ -30,8 +30,7 @@ public class Url {
 		return extractParametersFromQueryString(parameterString);
 	}
 
-	private Map<String, String> extractParametersFromQueryString(
-			String parameterString) {
+	private Map<String, String> extractParametersFromQueryString(String parameterString) {
 		Map<String, String> parameters = emptyMap();
 		String[] keyValuePairs = parameterString.split("&");
 		for (String keyValuePairString : keyValuePairs) {
@@ -41,12 +40,11 @@ public class Url {
 		return parameters;
 	}
 
-	private KeyValuePair<String, String> getKeyValuePair(
-			String keyValuePairString) {
+	private KeyValuePair<String, String> getKeyValuePair(String keyValuePairString) {
 		String[] keyValuePair = keyValuePairString.split("=");
 		if (keyValuePair.length == 1)
-			return new KeyValuePair<>(keyValuePair[0], null);
-		return new KeyValuePair<>(keyValuePair[0], keyValuePair[1]);
+			return new KeyValuePair<String, String>(keyValuePair[0], null);
+		return new KeyValuePair<String, String>(keyValuePair[0], keyValuePair[1]);
 	}
 
 	private String parseParameterString(String url) {

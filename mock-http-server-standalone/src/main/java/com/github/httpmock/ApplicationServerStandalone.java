@@ -71,7 +71,11 @@ public class ApplicationServerStandalone {
 	public void deploy(String pathToWar) {
 		try {
 			container.deploy("mockserver", new File(pathToWar));
-		} catch (OpenEJBException | IOException | NamingException e) {
+		} catch (OpenEJBException e) {
+			throw new ServerException(e);
+		} catch (IOException e) {
+			throw new ServerException(e);
+		} catch (NamingException e) {
 			throw new ServerException(e);
 		}
 	}

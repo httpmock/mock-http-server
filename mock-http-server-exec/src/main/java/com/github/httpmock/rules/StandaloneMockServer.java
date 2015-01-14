@@ -17,7 +17,7 @@ import com.jayway.restassured.RestAssured;
 public class StandaloneMockServer implements MockServer {
 
 	private Configuration config;
-	private ExecRunner runner;
+	private Thread runnerThread;
 
 	public StandaloneMockServer(Configuration config) {
 		this.config = config;
@@ -25,8 +25,9 @@ public class StandaloneMockServer implements MockServer {
 
 	@Override
 	public void start() {
-		runner = new ExecRunner(config, ExecRunner.readProperties());
-		runner.start();
+		ExecRunner runner = new ExecRunner(config, ExecRunner.readProperties());
+		runnerThread = new Thread(runner);
+		runnerThread.start();
 		waitUntilServerIsStarted();
 	}
 
@@ -52,8 +53,10 @@ public class StandaloneMockServer implements MockServer {
 			printWriter.print("SHUTDOWN");
 			printWriter.flush();
 			socket.close();
-			runner.join();
-		} catch (IOException | InterruptedException e) {
+			runnerThread.join();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(socket);
