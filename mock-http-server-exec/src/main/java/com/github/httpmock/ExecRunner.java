@@ -47,16 +47,21 @@ public class ExecRunner extends Thread {
 	private static final String ENV_HTTP_PORT = "HTTP_MOCK_SERVER_PORT_HTTP";
 	private static final String ENV_STOP_PORT = "HTTP_MOCK_SERVER_PORT_STOP";
 	private static final String PORT_AJP_DEFAULT = "HTTP_MOCK_SERVER_PORT_AJP";
-	private Properties config;
+	private Properties properties;
 	private String startPort;
 	private String stopPort;
 	private String ajpPort;
 
-	public ExecRunner(Properties config, String startPort, String stopPort, String ajpPort) {
-		this.config = config;
+	public ExecRunner(Properties properties, String startPort, String stopPort, String ajpPort) {
+		this.properties = properties;
 		this.startPort = startPort;
 		this.stopPort = stopPort;
 		this.ajpPort = ajpPort;
+	}
+
+	public ExecRunner(Configuration config, Properties properties) {
+		this(properties, Integer.toString(config.getHttpPort()), //
+				Integer.toString(config.getStopPort()), Integer.toString(config.getAjpPort()));
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -68,8 +73,7 @@ public class ExecRunner extends Thread {
 			stopPort = args[1];
 			ajpPort = args[2];
 		}
-		Properties config = readConfiguration();
-		ExecRunner runner = new ExecRunner(config, startPort, stopPort, ajpPort);
+		ExecRunner runner = new ExecRunner(readProperties(), startPort, stopPort, ajpPort);
 		runner.run();
 	}
 
@@ -137,12 +141,20 @@ public class ExecRunner extends Thread {
 		return Thread.currentThread().getContextClassLoader();
 	}
 
-	public static Properties readConfiguration() throws IOException, UnsupportedEncodingException {
+	public static Properties readProperties() {
 		ClassLoader contextClassLoader = getClassLoader();
 		InputStream is = contextClassLoader.getResourceAsStream(CONFIGURATION_PROPERTIES);
 		if (is == null)
-			throw new IllegalArgumentException("Config not found");
-		return loadProperties(is);
+			throw new RuntimeException("Config not found");
+		try {
+			return loadProperties(is);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			throw new ServerException(e);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ServerException(e);
+		}
 	}
 
 	private static Properties loadProperties(final InputStream is) throws IOException, UnsupportedEncodingException {
@@ -169,7 +181,7 @@ public class ExecRunner extends Thread {
 	void writeTimestamp() throws IOException {
 		File timestampFile = getTimestampFile();
 		String currentTime = Long.toString(System.currentTimeMillis());
-		IO.writeString(timestampFile, config.getProperty("timestamp", currentTime));
+		IO.writeString(timestampFile, properties.getProperty("timestamp", currentTime));
 	}
 
 	private boolean isUpdateRequired() throws IOException {
@@ -178,7 +190,7 @@ public class ExecRunner extends Thread {
 	}
 
 	private long getTimestampFromConfig() {
-		return Long.parseLong(config.getProperty("timestamp"));
+		return Long.parseLong(properties.getProperty("timestamp"));
 	}
 
 	private long getTimestampFromFile(File timestampFile) throws IOException {
@@ -191,7 +203,7 @@ public class ExecRunner extends Thread {
 	}
 
 	private void extractApplicationServer(File distribOutput) throws IOException {
-		String distrib = config.getProperty(PROPERTY_DISTRIBUTION);
+		String distrib = properties.getProperty(PROPERTY_DISTRIBUTION);
 		System.out.println("Extracting tomee to " + distribOutput.getAbsolutePath());
 		unzip(distribOutput, distrib);
 	}
@@ -203,7 +215,7 @@ public class ExecRunner extends Thread {
 	}
 
 	private File getDistrubtionDirectory() {
-		return new File(config.getProperty(PROPERTY_WORKING_DIR));
+		return new File(properties.getProperty(PROPERTY_WORKING_DIR));
 	}
 
 	void startServer() throws InterruptedException {
@@ -225,15 +237,15 @@ public class ExecRunner extends Thread {
 		if (additionalArgs != null)
 			Collections.addAll(jvmArgs, additionalArgs.split(" "));
 
-		for (final String k : config.stringPropertyNames())
+		for (final String k : properties.stringPropertyNames())
 			if (k.startsWith("jvmArg."))
-				jvmArgs.add(config.getProperty(k));
+				jvmArgs.add(properties.getProperty(k));
 		return jvmArgs;
 	}
 
 	private void setupClassPath(final RemoteServer server) {
-		if (config.containsKey("additionalClasspath")) {
-			server.setAdditionalClasspath(config.getProperty("additionalClasspath"));
+		if (properties.containsKey("additionalClasspath")) {
+			server.setAdditionalClasspath(properties.getProperty("additionalClasspath"));
 		}
 	}
 
@@ -241,7 +253,7 @@ public class ExecRunner extends Thread {
 		File distribOutput = getDistrubtionDirectory();
 		System.setProperty("openejb.home", distribOutput.getAbsolutePath());
 		System.setProperty("server.shutdown.port", getStopPort());
-		System.setProperty("server.shutdown.command", config.getProperty("shutdownCommand"));
+		System.setProperty("server.shutdown.command", properties.getProperty("shutdownCommand"));
 	}
 
 	static String getStartupPort() {

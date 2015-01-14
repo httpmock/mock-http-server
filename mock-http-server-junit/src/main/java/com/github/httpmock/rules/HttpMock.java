@@ -10,11 +10,11 @@ import com.github.httpmock.times.Times;
 public class HttpMock extends ExternalResource {
 
 	private static final String VERIFICATION_FAILED = "Mock verification failed. Request was called %d times but should have been called %s";
-	private HttpMockServer mockServer;
+	private HttpMockServerContext mockServer;
 
 	private MockService mockService;
 
-	public HttpMock(HttpMockServer mockServer) {
+	public HttpMock(HttpMockServerContext mockServer) {
 		this.mockServer = mockServer;
 	}
 

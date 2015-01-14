@@ -42,9 +42,8 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>mock-http-server-standalone</artifactId>
-			<version>${project.version}</version>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

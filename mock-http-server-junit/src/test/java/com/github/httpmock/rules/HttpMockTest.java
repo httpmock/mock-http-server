@@ -30,7 +30,7 @@ public class HttpMockTest {
 	public ExpectedException expectedException = ExpectedException.none();
 
 	@Mock
-	private HttpMockServer mockServer;
+	private HttpMockServerContext mockServer;
 
 	@Mock
 	private MockService mockService;

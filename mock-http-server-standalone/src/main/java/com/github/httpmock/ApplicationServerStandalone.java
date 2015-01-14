@@ -9,7 +9,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
 
-public class HttpMockServerStandalone {
+public class ApplicationServerStandalone {
 	private static final int PORT_STOP_DEFAULT = 9099;
 	private static final int PORT_HTTP_DEFAULT = 9090;
 	private static final String ENV_HTTP_PORT = "HTTP_MOCK_SERVER_PORT_HTTP";
@@ -20,12 +20,12 @@ public class HttpMockServerStandalone {
 	private final int stopPort;
 
 	public static void main(String[] args) {
-		HttpMockServerStandalone mockServer = new HttpMockServerStandalone(//
+		ApplicationServerStandalone server = new ApplicationServerStandalone(//
 				getConfiguredHttpPort(), //
 				getConfiguredStopPort());
-		mockServer.start();
-		mockServer.deploy(getPathToWar(args));
-		mockServer.waitUntilStop();
+		server.start();
+		server.deploy(getPathToWar(args));
+		server.waitUntilStop();
 	}
 
 	static int getConfiguredStopPort() {
@@ -49,11 +49,11 @@ public class HttpMockServerStandalone {
 		return "wars/mockserver.war";
 	}
 
-	public HttpMockServerStandalone(int serverPort, int stopPort) {
+	public ApplicationServerStandalone(int serverPort, int stopPort) {
 		this(serverPort, stopPort, new Container());
 	}
 
-	HttpMockServerStandalone(int serverPort, int stopPort, Container container) {
+	ApplicationServerStandalone(int serverPort, int stopPort, Container container) {
 		this.serverPort = serverPort;
 		this.stopPort = stopPort;
 		this.container = container;

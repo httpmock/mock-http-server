@@ -21,7 +21,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HttpMockServerStandaloneTest {
+public class ApplicationServerStandaloneTest {
 	private static final int SERVER_PORT = 0;
 	private static final int SERVER_STOP_PORT = 0;
 
@@ -31,10 +31,10 @@ public class HttpMockServerStandaloneTest {
 	@Mock
 	private Container container;
 
-	private HttpMockServerStandalone tomee;
+	private ApplicationServerStandalone tomee;
 
-	private HttpMockServerStandalone createServer() {
-		return new HttpMockServerStandalone(SERVER_PORT, SERVER_STOP_PORT, container);
+	private ApplicationServerStandalone createServer() {
+		return new ApplicationServerStandalone(SERVER_PORT, SERVER_STOP_PORT, container);
 	}
 
 	@Before
@@ -96,12 +96,12 @@ public class HttpMockServerStandaloneTest {
 
 	@Test
 	public void defaultStartPort() throws Exception {
-		assertThat(HttpMockServerStandalone.getConfiguredHttpPort(), is(9090));
+		assertThat(ApplicationServerStandalone.getConfiguredHttpPort(), is(9090));
 	}
 
 	@Test
 	public void defaultStopPort() throws Exception {
-		assertThat(HttpMockServerStandalone.getConfiguredStopPort(), is(9099));
+		assertThat(ApplicationServerStandalone.getConfiguredStopPort(), is(9099));
 	}
 
 	@Test
@@ -111,7 +111,7 @@ public class HttpMockServerStandaloneTest {
 
 	@Test
 	public void pathToWar() throws Exception {
-		assertThat(HttpMockServerStandalone.getPathToWar(new String[] {}), is("wars/mockserver.war"));
-		assertThat(HttpMockServerStandalone.getPathToWar(new String[] { "pathtowar" }), is("pathtowar"));
+		assertThat(ApplicationServerStandalone.getPathToWar(new String[] {}), is("wars/mockserver.war"));
+		assertThat(ApplicationServerStandalone.getPathToWar(new String[] { "pathtowar" }), is("pathtowar"));
 	}
 }

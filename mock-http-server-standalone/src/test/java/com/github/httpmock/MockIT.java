@@ -32,11 +32,11 @@ public class MockIT {
 	private static final String METHOD_POST = "POST";
 	private static final int SERVER_PORT = 8089;
 	private static final int SERVER_STOP_PORT = 8012;
-	private static HttpMockServerStandalone mockServer;
+	private static ApplicationServerStandalone mockServer;
 
 	@BeforeClass
 	public static void startServer() throws Exception {
-		mockServer = new HttpMockServerStandalone(SERVER_PORT, SERVER_STOP_PORT);
+		mockServer = new ApplicationServerStandalone(SERVER_PORT, SERVER_STOP_PORT);
 		mockServer.start();
 		mockServer.deploy("target/wars/mockserver.war");
 	}
