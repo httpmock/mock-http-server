@@ -52,7 +52,6 @@ public class HttpMockServerContextTest {
 	@Test
 	public void getMockService() throws Throwable {
 		httpMockServer.before();
-		// when(mockServer.getHttpPort()).thenReturn(123);
 
 		MockService mockService = httpMockServer.getMockService();
 		assertThat(mockService, is(notNullValue()));

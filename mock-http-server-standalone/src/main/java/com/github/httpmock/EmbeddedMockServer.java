@@ -7,9 +7,16 @@ import java.util.List;
 public class EmbeddedMockServer implements MockServer {
 	private ApplicationServerStandalone applicationServer;
 
+	public EmbeddedMockServer() {
+		this(createApplicationServer());
+	}
+
+	public EmbeddedMockServer(ApplicationServerStandalone applicationServer) {
+		this.applicationServer = applicationServer;
+	}
+
 	@Override
 	public void start() {
-		applicationServer = createApplicationServer();
 		try {
 			applicationServer.start();
 		} catch (Exception e) {
@@ -18,7 +25,7 @@ public class EmbeddedMockServer implements MockServer {
 		applicationServer.deploy("target/wars/mockserver.war");
 	}
 
-	ApplicationServerStandalone createApplicationServer() {
+	static ApplicationServerStandalone createApplicationServer() {
 		List<Integer> randomPorts = getRandomPorts(2);
 		return new ApplicationServerStandalone(randomPorts.get(0), randomPorts.get(1));
 	}
@@ -38,9 +45,7 @@ public class EmbeddedMockServer implements MockServer {
 
 	@Override
 	public String getBaseUri() {
-		int port = getPort();
-		String host = "localhost";
-		return String.format("http://%s:%d", host, port);
+		return String.format("http://localhost:%d", getPort());
 	}
 
 }
