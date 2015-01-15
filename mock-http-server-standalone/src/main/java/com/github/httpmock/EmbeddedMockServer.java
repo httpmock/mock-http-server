@@ -1,6 +1,6 @@
 package com.github.httpmock;
 
-import static com.github.httpmock.PortUtil.getRandomPorts;
+import static com.github.httpmock.exec.PortUtil.getRandomPorts;
 
 import java.util.List;
 

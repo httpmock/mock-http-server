@@ -10,11 +10,11 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.httpmock.api.times.ExcatlyOnce;
 import com.github.httpmock.dto.RequestDto;
 import com.github.httpmock.dto.ResponseDto;
-import com.github.httpmock.rules.HttpMock;
-import com.github.httpmock.rules.HttpMockServerContext;
-import com.github.httpmock.times.ExcatlyOnce;
+import com.github.httpmock.junit.rules.HttpMock;
+import com.github.httpmock.junit.rules.HttpMockServerContext;
 import com.jayway.restassured.response.Response;
 
 public class ExampleIT {
