@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,7 +33,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class ApplicationServerRunner extends Thread {
+public class ApplicationServerRunner implements Callable<Void> {
 	private static final String PROPERTY_ADDITIONAL_SYSTEM_PROPERTIES = "additionalSystemProperties";
 	public static final String PROPERTY_WORKING_DIR = "workingDir";
 	public static final String PROPERTY_DISTRIBUTION = "distribution";
@@ -60,7 +61,7 @@ public class ApplicationServerRunner extends Thread {
 
 	public static void main(String[] args) throws Exception {
 		ApplicationServerRunner runner = new ApplicationServerRunner(getConfig(args));
-		runner.run();
+		runner.call();
 	}
 
 	public static Configuration getConfig(String[] args) {
@@ -70,20 +71,18 @@ public class ApplicationServerRunner extends Thread {
 				.ajpPort(getAjpPort());
 		if (args.length == 3) {
 			configBuilder.httpPort(Integer.parseInt(args[0]))//
-			.stopPort(Integer.parseInt(args[1]))//
-			.ajpPort(Integer.parseInt(args[2]));
+					.stopPort(Integer.parseInt(args[1]))//
+					.ajpPort(Integer.parseInt(args[2]));
 		}
 		return configBuilder.build();
 	}
 
 	@Override
-	public void run() {
-		try {
-			createDistributionFolderIfNecessary();
-			configureServerConfig();
-			startServer();
-		} catch (Exception e) {
-		}
+	public Void call() throws Exception {
+		createDistributionFolderIfNecessary();
+		configureServerConfig();
+		startServer();
+		return null;
 	}
 
 	void configureServerConfig() throws SAXException, IOException, ParserConfigurationException, TransformerException, XPathExpressionException {

@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import com.github.httpmock.MockServer;
+import com.github.httpmock.ServerException;
 import com.jayway.awaitility.Awaitility;
 import com.jayway.awaitility.Duration;
 import com.jayway.restassured.RestAssured;
@@ -29,10 +33,21 @@ public class StandaloneMockServer implements MockServer {
 
 	@Override
 	public void start() {
-		runner = runnerFactory.create(config);
-		runner.start();
+		startServerInBackground();
 		waitUntilServerIsStarted();
 		Logger.getLogger(getClass().getName()).info("server is started");
+	}
+
+	void startServerInBackground() {
+		runner = runnerFactory.create(config);
+		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+		try {
+			singleThreadExecutor.submit(runner).get();
+		} catch (InterruptedException e) {
+			throw new ServerException(e);
+		} catch (ExecutionException e) {
+			throw new ServerException(e);
+		}
 	}
 
 	public void waitUntilServerIsStarted() {
@@ -59,10 +74,6 @@ public class StandaloneMockServer implements MockServer {
 		try {
 			runner.stopServer();
 		} catch (Exception e) {
-		}
-		try {
-			runner.join();
-		} catch (InterruptedException e) {
 		}
 	}
 
