@@ -36,7 +36,7 @@
 		<tomee-plugin.ajp>9009</tomee-plugin.ajp>
 		<tomee-plugin.http>9090</tomee-plugin.http>
 		<tomee-plugin.shutdown>9099</tomee-plugin.shutdown>
-		<tomee-plugin.runner-class>com.github.httpmock.ExecRunner</tomee-plugin.runner-class>
+		<tomee-plugin.runner-class>com.github.httpmock.exec.ApplicationServerRunner</tomee-plugin.runner-class>
 	</properties>
 
 	<dependencies>
