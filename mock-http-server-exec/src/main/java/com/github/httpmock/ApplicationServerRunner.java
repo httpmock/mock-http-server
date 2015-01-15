@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class ExecRunner implements Runnable {
+public class ApplicationServerRunner extends Thread {
 	private static final String PROPERTY_ADDITIONAL_SYSTEM_PROPERTIES = "additionalSystemProperties";
 	public static final String PROPERTY_WORKING_DIR = "workingDir";
 	public static final String PROPERTY_DISTRIBUTION = "distribution";
@@ -52,20 +52,20 @@ public class ExecRunner implements Runnable {
 	private String stopPort;
 	private String ajpPort;
 
-	public ExecRunner(Properties properties, String startPort, String stopPort, String ajpPort) {
+	public ApplicationServerRunner(Properties properties, String startPort, String stopPort, String ajpPort) {
 		this.properties = properties;
 		this.startPort = startPort;
 		this.stopPort = stopPort;
 		this.ajpPort = ajpPort;
 	}
 
-	public ExecRunner(Configuration config, Properties properties) {
+	public ApplicationServerRunner(Configuration config, Properties properties) {
 		this(properties, Integer.toString(config.getHttpPort()), //
 				Integer.toString(config.getStopPort()), Integer.toString(config.getAjpPort()));
 	}
 
 	public static void main(String[] args) throws Exception {
-		ExecRunner runner = new ExecRunner(getConfig(args), readProperties());
+		ApplicationServerRunner runner = new ApplicationServerRunner(getConfig(args), readProperties());
 		runner.run();
 	}
 
@@ -76,8 +76,8 @@ public class ExecRunner implements Runnable {
 				.ajpPort(getAjpPort());
 		if (args.length == 3) {
 			configBuilder.httpPort(Integer.parseInt(args[0]))//
-			.stopPort(Integer.parseInt(args[1]))//
-			.ajpPort(Integer.parseInt(args[2]));
+					.stopPort(Integer.parseInt(args[1]))//
+					.ajpPort(Integer.parseInt(args[2]));
 		}
 		return configBuilder.build();
 	}

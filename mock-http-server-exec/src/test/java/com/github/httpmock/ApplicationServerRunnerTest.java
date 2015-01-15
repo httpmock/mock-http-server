@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ExecRunnerTest {
+public class ApplicationServerRunnerTest {
 	@Captor
 	private ArgumentCaptor<List<String>> stringListCaptor;
 
@@ -47,7 +47,7 @@ public class ExecRunnerTest {
 
 	private Properties properties;
 
-	private ExecRunner runner;
+	private ApplicationServerRunner runner;
 
 	@Mock
 	private Document document;
@@ -56,7 +56,7 @@ public class ExecRunnerTest {
 	public void setup() {
 		properties = properties();
 		when(remoteServer.getServer()).thenReturn(serverProcess);
-		runner = spy(new ExecRunner(properties, "12345", "54321", "22333"));
+		runner = spy(new ApplicationServerRunner(properties, "12345", "54321", "22333"));
 		when(runner.createRemoteServer()).thenReturn(remoteServer);
 	}
 
@@ -172,7 +172,7 @@ public class ExecRunnerTest {
 	@Test
 	public void extractDistributionFolder() throws Exception {
 		properties.put("timestamp", "0");
-		properties.put(ExecRunner.PROPERTY_DISTRIBUTION, ".distribution");
+		properties.put(ApplicationServerRunner.PROPERTY_DISTRIBUTION, ".distribution");
 		doNothing().when(runner).unzip(any(File.class), any(String.class));
 		doNothing().when(runner).writeTimestamp();
 
@@ -183,7 +183,7 @@ public class ExecRunnerTest {
 
 	private Properties properties() {
 		Properties properties = new Properties();
-		properties.put(ExecRunner.PROPERTY_WORKING_DIR, "target/test/resources/tomee");
+		properties.put(ApplicationServerRunner.PROPERTY_WORKING_DIR, "target/test/resources/tomee");
 		properties.put("shutdownCommand", "shutdown");
 		return properties;
 	}

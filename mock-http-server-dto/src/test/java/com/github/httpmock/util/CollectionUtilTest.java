@@ -6,13 +6,16 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.github.httpmock.util.CollectionUtil;
-
 public class CollectionUtilTest {
 
 	@Test
 	public void emptyList() throws Exception {
 		assertThat(CollectionUtil.emptyList(), is(empty()));
+	}
+
+	@Test
+	public void emptyListWithSize() throws Exception {
+		assertThat(CollectionUtil.emptyList(3), is(empty()));
 	}
 
 	@Test
