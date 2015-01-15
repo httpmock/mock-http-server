@@ -1,8 +1,5 @@
 package com.github.httpmock.exec;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -52,16 +49,16 @@ public class StandaloneMockServer implements MockServer {
 
 	public void waitUntilServerIsStarted() {
 		Awaitility.await().catchUncaughtExceptions()//
-				.atMost(Duration.ONE_MINUTE)//
-				.pollDelay(Duration.TWO_SECONDS)//
-				.pollInterval(Duration.ONE_SECOND)//
-				.until(new Callable<Boolean>() {
-					@Override
-					public Boolean call() throws Exception {
-						Logger.getLogger(getClass().getName()).info("waiting for server to start");
-						return isServerStarted();
-					}
-				});
+		.atMost(Duration.ONE_MINUTE)//
+		.pollDelay(Duration.TWO_SECONDS)//
+		.pollInterval(Duration.ONE_SECOND)//
+		.until(new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				Logger.getLogger(getClass().getName()).info("waiting for server to start");
+				return isServerStarted();
+			}
+		});
 	}
 
 	public boolean isServerStarted() {
@@ -75,10 +72,6 @@ public class StandaloneMockServer implements MockServer {
 			runner.stopServer();
 		} catch (Exception e) {
 		}
-	}
-
-	Socket createStopSocket() throws UnknownHostException, IOException {
-		return new Socket("localhost", config.getStopPort());
 	}
 
 	@Override

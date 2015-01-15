@@ -49,7 +49,7 @@ public class StandaloneMockServerTest {
 	public void startServer() throws Exception {
 		server.start();
 
-		verify(runner).start();
+		verify(runner).call();
 	}
 
 	@Test
@@ -57,7 +57,6 @@ public class StandaloneMockServerTest {
 		Socket socket = mock(Socket.class);
 		OutputStream outputStream = mock(OutputStream.class);
 		when(socket.getOutputStream()).thenReturn(outputStream);
-		doReturn(socket).when(server).createStopSocket();
 
 		server.start();
 		server.stop();
