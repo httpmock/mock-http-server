@@ -6,6 +6,10 @@ public class ServerException extends RuntimeException {
 		super(throwable);
 	}
 
+	public ServerException(String message) {
+		super(message);
+	}
+
 	private static final long serialVersionUID = 1L;
 
 }

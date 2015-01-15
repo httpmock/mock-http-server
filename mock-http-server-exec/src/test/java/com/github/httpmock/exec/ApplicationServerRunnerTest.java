@@ -1,6 +1,7 @@
 package com.github.httpmock.exec;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.xml.HasXPath.hasXPath;
@@ -34,8 +35,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.github.httpmock.exec.ApplicationServerRunner;
-
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationServerRunnerTest {
 	@Captor
@@ -54,11 +53,14 @@ public class ApplicationServerRunnerTest {
 	@Mock
 	private Document document;
 
+	@Mock
+	private Configuration config;
+
 	@Before
 	public void setup() {
 		properties = properties();
 		when(remoteServer.getServer()).thenReturn(serverProcess);
-		runner = spy(new ApplicationServerRunner(properties, "12345", "54321", "22333"));
+		runner = spy(new ApplicationServerRunner(config, properties));
 		when(runner.createRemoteServer()).thenReturn(remoteServer);
 	}
 
@@ -99,6 +101,10 @@ public class ApplicationServerRunnerTest {
 
 	@Test
 	public void configureServerConfig() throws Exception {
+		when(config.getHttpPort()).thenReturn(12345);
+		when(config.getStopPort()).thenReturn(54321);
+		when(config.getAjpPort()).thenReturn(22333);
+
 		doReturn(document).when(runner).getServerXmlDocument(any(File.class));
 		doNothing().when(runner).saveXml(eq(document), any(File.class));
 
@@ -116,7 +122,7 @@ public class ApplicationServerRunnerTest {
 
 		verify(runner).configureStopPort(document, "54321");
 		verify(serverNode).setAttribute("port", "54321");
-		verify(runner).configureStartPort(document, "12345");
+		verify(runner).configureHttpPort(document, "12345");
 		verify(connectorNode).setAttribute("port", "12345");
 		verify(runner).configureAjpPort(document, "22333");
 		verify(connectorNode).setAttribute("port", "22333");
@@ -129,7 +135,7 @@ public class ApplicationServerRunnerTest {
 				.newDocumentBuilder()//
 				.parse(new ByteArrayInputStream(fakeServerConfig().getBytes()));
 
-		runner.configureStartPort(document, "12345");
+		runner.configureHttpPort(document, "12345");
 
 		assertThat(document, hasXPath("//Connector[@protocol='HTTP/1.1' and @port='12345']"));
 	}
@@ -188,5 +194,21 @@ public class ApplicationServerRunnerTest {
 		properties.put(ApplicationServerRunner.PROPERTY_WORKING_DIR, "target/test/resources/tomee");
 		properties.put("shutdownCommand", "shutdown");
 		return properties;
+	}
+
+	@Test
+	public void createDefaultConfig() throws Exception {
+		Configuration config = ApplicationServerRunner.getConfig(new String[] {});
+		assertThat(config.getHttpPort(), is(9090));
+		assertThat(config.getStopPort(), is(9099));
+		assertThat(config.getAjpPort(), is(9009));
+	}
+
+	@Test
+	public void createConfigFromCommandLine() throws Exception {
+		Configuration config = ApplicationServerRunner.getConfig(new String[] { "1516", "1744", "1777" });
+		assertThat(config.getHttpPort(), is(1516));
+		assertThat(config.getStopPort(), is(1744));
+		assertThat(config.getAjpPort(), is(1777));
 	}
 }

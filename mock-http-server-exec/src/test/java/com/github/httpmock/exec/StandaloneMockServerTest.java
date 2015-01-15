@@ -24,7 +24,6 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.github.httpmock.ServerException;
-import com.github.httpmock.exec.StandaloneMockServer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StandaloneMockServerTest {
@@ -89,4 +88,16 @@ public class StandaloneMockServerTest {
 		server.stop();
 	}
 
+	@Test
+	public void baseUri() throws Exception {
+		when(config.getHttpPort()).thenReturn(1516);
+		assertThat(server.getBaseUri(), is("http://localhost:1516"));
+	}
+
+	@Test
+	public void initWithConfig() throws Exception {
+		when(config.getHttpPort()).thenReturn(1516);
+		server = new StandaloneMockServer(config);
+		assertThat(server.getBaseUri(), is("http://localhost:1516"));
+	}
 }

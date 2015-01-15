@@ -3,8 +3,6 @@ package com.github.httpmock.exec;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,13 +32,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.github.httpmock.ServerException;
-
 public class ApplicationServerRunner extends Thread {
 	private static final String PROPERTY_ADDITIONAL_SYSTEM_PROPERTIES = "additionalSystemProperties";
 	public static final String PROPERTY_WORKING_DIR = "workingDir";
 	public static final String PROPERTY_DISTRIBUTION = "distribution";
-	private static final String UTF_8 = "UTF-8";
 	private static final String CONFIGURATION_PROPERTIES = "configuration.properties";
 
 	private static final int PORT_STOP_DEFAULT = 9099;
@@ -49,25 +44,21 @@ public class ApplicationServerRunner extends Thread {
 	private static final String ENV_HTTP_PORT = "HTTP_MOCK_SERVER_PORT_HTTP";
 	private static final String ENV_STOP_PORT = "HTTP_MOCK_SERVER_PORT_STOP";
 	private static final String ENV_AJP_PORT = "HTTP_MOCK_SERVER_PORT_AJP";
+	private Configuration config;
 	private Properties properties;
-	private String startPort;
-	private String stopPort;
-	private String ajpPort;
-
-	public ApplicationServerRunner(Properties properties, String startPort, String stopPort, String ajpPort) {
-		this.properties = properties;
-		this.startPort = startPort;
-		this.stopPort = stopPort;
-		this.ajpPort = ajpPort;
-	}
 
 	public ApplicationServerRunner(Configuration config, Properties properties) {
-		this(properties, Integer.toString(config.getHttpPort()), //
-				Integer.toString(config.getStopPort()), Integer.toString(config.getAjpPort()));
+		this.config = config;
+		this.properties = properties;
+	}
+
+	public ApplicationServerRunner(Configuration config) {
+		this.config = config;
+		this.properties = readProperties();
 	}
 
 	public static void main(String[] args) throws Exception {
-		ApplicationServerRunner runner = new ApplicationServerRunner(getConfig(args), readProperties());
+		ApplicationServerRunner runner = new ApplicationServerRunner(getConfig(args));
 		runner.run();
 	}
 
@@ -99,9 +90,9 @@ public class ApplicationServerRunner extends Thread {
 		File serverXml = new File(getDistrubtionDirectory(), "conf/server.xml");
 		Document doc = getServerXmlDocument(serverXml);
 
-		configureStartPort(doc, startPort);
-		configureStopPort(doc, stopPort);
-		configureAjpPort(doc, ajpPort);
+		configureHttpPort(doc, Integer.toString(config.getHttpPort()));
+		configureStopPort(doc, Integer.toString(config.getStopPort()));
+		configureAjpPort(doc, Integer.toString(config.getAjpPort()));
 
 		saveXml(doc, serverXml);
 	}
@@ -114,7 +105,7 @@ public class ApplicationServerRunner extends Thread {
 		configurePortForElementsInXpath(doc, stopPort, "/Server");
 	}
 
-	void configureStartPort(Document doc, String port) throws XPathExpressionException {
+	void configureHttpPort(Document doc, String port) throws XPathExpressionException {
 		configurePortForProtocol(doc, port, "HTTP/1.1");
 	}
 
@@ -148,27 +139,9 @@ public class ApplicationServerRunner extends Thread {
 		return Thread.currentThread().getContextClassLoader();
 	}
 
-	public static Properties readProperties() {
-		ClassLoader contextClassLoader = getClassLoader();
-		InputStream is = contextClassLoader.getResourceAsStream(CONFIGURATION_PROPERTIES);
-		if (is == null)
-			throw new RuntimeException("Config not found");
-		try {
-			return loadProperties(is);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			throw new ServerException(e);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new ServerException(e);
-		}
-	}
-
-	private static Properties loadProperties(final InputStream is) throws IOException, UnsupportedEncodingException {
-		Properties config = new Properties();
-		config.load(new InputStreamReader(is, UTF_8));
-		is.close();
-		return config;
+	public Properties readProperties() {
+		PropertiesReader propertiesReader = new PropertiesReader(getClassLoader());
+		return propertiesReader.read(CONFIGURATION_PROPERTIES);
 	}
 
 	void createDistributionFolderIfNecessary() throws IOException {
