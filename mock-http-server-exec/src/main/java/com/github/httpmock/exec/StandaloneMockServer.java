@@ -1,18 +1,16 @@
 package com.github.httpmock.exec;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.Callable;
-
-import org.apache.commons.io.IOUtils;
+import java.util.logging.Logger;
 
 import com.github.httpmock.MockServer;
-import com.github.httpmock.ServerException;
 import com.jayway.awaitility.Awaitility;
 import com.jayway.awaitility.Duration;
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.config.RestAssuredConfig;
 
 public class StandaloneMockServer implements MockServer {
 
@@ -34,38 +32,37 @@ public class StandaloneMockServer implements MockServer {
 		runner = runnerFactory.create(config);
 		runner.start();
 		waitUntilServerIsStarted();
+		Logger.getLogger(getClass().getName()).info("server is started");
 	}
 
 	public void waitUntilServerIsStarted() {
-		Awaitility.await().atMost(Duration.ONE_MINUTE).until(new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return isServerStarted();
-			}
-		});
+		Awaitility.await().catchUncaughtExceptions()//
+				.atMost(Duration.ONE_MINUTE)//
+				.pollDelay(Duration.TWO_SECONDS)//
+				.pollInterval(Duration.ONE_SECOND)//
+				.until(new Callable<Boolean>() {
+					@Override
+					public Boolean call() throws Exception {
+						Logger.getLogger(getClass().getName()).info("waiting for server to start");
+						return isServerStarted();
+					}
+				});
 	}
 
 	public boolean isServerStarted() {
-		return RestAssured.given().baseUri(getBaseUri()).basePath("/mockserver").get("/").statusCode() == 200;
+		RestAssuredConfig config = RestAssured.config().httpClient(RestAssuredConfig.config().getHttpClientConfig().setParam("CONNECTION_MANAGER_TIMEOUT", 1000));
+		return RestAssured.given().config(config).baseUri(getBaseUri()).basePath("/mockserver").get("/").statusCode() == 200;
 	}
 
 	@Override
 	public void stop() {
-		Socket socket = null;
-		PrintWriter printWriter = null;
 		try {
-			socket = createStopSocket();
-			printWriter = new PrintWriter(socket.getOutputStream());
-			printWriter.print("SHUTDOWN");
-			printWriter.flush();
+			runner.stopServer();
+		} catch (Exception e) {
+		}
+		try {
 			runner.join();
-		} catch (IOException e) {
-			throw new ServerException(e);
 		} catch (InterruptedException e) {
-			throw new ServerException(e);
-		} finally {
-			IOUtils.closeQuietly(printWriter);
-			IOUtils.closeQuietly(socket);
 		}
 	}
 

@@ -46,6 +46,7 @@ public class ApplicationServerRunner extends Thread {
 	private static final String ENV_AJP_PORT = "HTTP_MOCK_SERVER_PORT_AJP";
 	private Configuration config;
 	private Properties properties;
+	private RemoteServer server;
 
 	public ApplicationServerRunner(Configuration config, Properties properties) {
 		this.config = config;
@@ -69,8 +70,8 @@ public class ApplicationServerRunner extends Thread {
 				.ajpPort(getAjpPort());
 		if (args.length == 3) {
 			configBuilder.httpPort(Integer.parseInt(args[0]))//
-					.stopPort(Integer.parseInt(args[1]))//
-					.ajpPort(Integer.parseInt(args[2]));
+			.stopPort(Integer.parseInt(args[1]))//
+			.ajpPort(Integer.parseInt(args[2]));
 		}
 		return configBuilder.build();
 	}
@@ -82,7 +83,6 @@ public class ApplicationServerRunner extends Thread {
 			configureServerConfig();
 			startServer();
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -200,7 +200,7 @@ public class ApplicationServerRunner extends Thread {
 
 	void startServer() throws InterruptedException {
 		setupSystemProperties();
-		RemoteServer server = createRemoteServer();
+		server = createRemoteServer();
 		server.setPortStartup(getHttpPort());
 		setupClassPath(server);
 		server.start(getJvmArgs(), "start", true);
@@ -257,4 +257,7 @@ public class ApplicationServerRunner extends Thread {
 		return stopPort;
 	}
 
+	public void stopServer() throws Exception {
+		server.forceStop();
+	}
 }
