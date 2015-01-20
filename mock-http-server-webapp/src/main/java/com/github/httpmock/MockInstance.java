@@ -2,14 +2,14 @@ package com.github.httpmock;
 
 import static com.github.httpmock.util.CollectionUtil.emptyList;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.github.httpmock.dto.ConfigurationDto;
 import com.github.httpmock.dto.RequestDto;
 import com.github.httpmock.request.RequestCounter;
 
-public class MockInstance {
-
+public class MockInstance implements MockReplayListener {
 	private String id;
 	private List<ConfigurationDto> configurations;
 	private RequestCounter requestCounter;
@@ -32,16 +32,19 @@ public class MockInstance {
 		configurations.add(configuration);
 	}
 
-	public void count(RequestDto mock) {
-		requestCounter.count(mock);
-	}
-
-	void setRequestCounter(RequestCounter requestCounter) {
-		this.requestCounter = requestCounter;
-	}
-
 	public int getCount(RequestDto request) {
 		return requestCounter.getCount(request);
+	}
+
+	@Override
+	public void onReplay(ConfigurationDto configuration) {
+		for(MockReplayListener replayListener : getReplayListeners()) {
+			replayListener.onReplay(configuration);
+		}
+	}
+
+	private List<? extends MockReplayListener> getReplayListeners() {
+		return Arrays.asList(requestCounter);
 	}
 
 }

@@ -124,6 +124,50 @@ public class RequestMatcherTest {
 				is(false));
 	}
 
+	@Test
+	public void matchRequestPayloadIsDifferent() throws Exception {
+		String url = "some/url?var1=value1&var2=value2";
+		RequestDto configuredRequest = request().payload("test").url(
+				url).build();
+		RequestDto incommingRequest = request().payload("test2").url(
+				url).build();
+		assertThat(matcher.matches(configuredRequest, incommingRequest),
+				is(false));
+	}
+
+	@Test
+	public void matchRequestPayloadNotSet() throws Exception {
+		String url = "some/url?var1=value1&var2=value2";
+		RequestDto configuredRequest = request().payload("test").url(
+				url).build();
+		RequestDto incommingRequest = request().url(
+				url).build();
+		assertThat(matcher.matches(configuredRequest, incommingRequest),
+				is(false));
+	}
+
+	@Test
+	public void matchRequestPayloadNotConfigured() throws Exception {
+		String url = "some/url?var1=value1&var2=value2";
+		RequestDto configuredRequest = request().url(
+				url).build();
+		RequestDto incommingRequest = request().payload("test").url(
+				url).build();
+		assertThat(matcher.matches(configuredRequest, incommingRequest),
+				is(true));
+	}
+
+	@Test
+	public void matchRequestPayloadIsEqual() throws Exception {
+		String url = "some/url?var1=value1&var2=value2";
+		RequestDto configuredRequest = request().payload("test").url(
+				url).build();
+		RequestDto incommingRequest = request().payload("test").url(
+				url).build();
+		assertThat(matcher.matches(configuredRequest, incommingRequest),
+				is(true));
+	}
+
 	private RequestBuilder someRequest() {
 		return request().url("some/url");
 	}

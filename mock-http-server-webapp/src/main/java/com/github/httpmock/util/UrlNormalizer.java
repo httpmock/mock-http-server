@@ -4,12 +4,12 @@ public abstract class UrlNormalizer {
 
 	public static String normalizeUrl(String url) {
 		url = removeTailingSlashes(url);
-		url = addBeginngSlash(url);
+		url = addBeginningSlash(url);
 		url = removeDuplicateSlashes(url);
 		return url;
 	}
 
-	private static String addBeginngSlash(String url) {
+	private static String addBeginningSlash(String url) {
 		if (url.length() == 0 || url.charAt(0) != '/')
 			return '/' + url;
 		return url;

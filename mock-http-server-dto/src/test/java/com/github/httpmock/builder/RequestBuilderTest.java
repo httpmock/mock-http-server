@@ -51,4 +51,10 @@ public class RequestBuilderTest {
 		assertThat(request.getMethod(), is("POST"));
 	}
 
+	@Test
+	public void payload() throws Exception {
+		RequestDto request = request().payload("payload").build();
+		assertThat(request.getPayload(), is("payload"));
+	}
+
 }

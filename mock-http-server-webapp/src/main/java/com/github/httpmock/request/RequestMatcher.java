@@ -7,10 +7,16 @@ import com.github.httpmock.dto.RequestDto;
 @Stateless
 public class RequestMatcher {
 
-	public boolean matches(RequestDto configuredRequest, RequestDto request1) {
-		return isMethodMatching(configuredRequest, request1)
-				&& isUrlMatching(configuredRequest, request1)
-				&& isContentTypeMatching(configuredRequest, request1);
+	public boolean matches(RequestDto configuredRequest, RequestDto request) {
+		return isMethodMatching(configuredRequest, request)
+				&& isUrlMatching(configuredRequest, request)
+				&& isContentTypeMatching(configuredRequest, request)
+				&& isContentMatching(configuredRequest, request);
+	}
+
+	private boolean isContentMatching(RequestDto configuredRequest, RequestDto request) {
+		return configuredRequest.getPayload() == null ||
+		configuredRequest.getPayload().equals(request.getPayload());
 	}
 
 	private boolean isMethodMatching(RequestDto configuredRequest,

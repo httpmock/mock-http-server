@@ -8,6 +8,7 @@ public class RequestDto {
 	private String method;
 	private String url;
 	private String contentType;
+	private String payload;
 
 	public String getMethod() {
 		return method;
@@ -33,6 +34,14 @@ public class RequestDto {
 		this.contentType = contentType;
 	}
 
+	public void setPayload(String payload) {
+		this.payload = payload;
+	}
+
+	public String getPayload() {
+		return payload;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		return EqualsBuilder.reflectionEquals(this, obj);
@@ -42,5 +51,4 @@ public class RequestDto {
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this);
 	}
-
 }

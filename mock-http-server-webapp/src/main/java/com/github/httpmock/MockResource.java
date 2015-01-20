@@ -116,7 +116,8 @@ public class MockResource {
 		if (configuration == null)
 			return notFound();
 
-		mock.count(configuration.getRequest());
+		mock.onReplay(configuration);
+
 		return toResponse(configuration.getResponse());
 	}
 

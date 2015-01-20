@@ -7,6 +7,7 @@ public class RequestBuilder {
 	private String url;
 	private String method;
 	private String contentType;
+	private String payload;
 
 	public RequestBuilder() {
 		this.method = "GET";
@@ -36,16 +37,21 @@ public class RequestBuilder {
 		return this;
 	}
 
+	public RequestBuilder payload(String payload) {
+		this.payload = payload;
+		return this;
+	}
+
 	public RequestDto build() {
 		RequestDto requestDto = new RequestDto();
 		requestDto.setMethod(method);
 		requestDto.setUrl(url);
 		requestDto.setContentType(contentType);
+		requestDto.setPayload(payload);
 		return requestDto;
 	}
 
 	public static RequestBuilder request() {
 		return new RequestBuilder();
 	}
-
 }

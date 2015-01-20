@@ -4,9 +4,11 @@ import static com.github.httpmock.util.CollectionUtil.emptyMap;
 
 import java.util.Map;
 
+import com.github.httpmock.MockReplayListener;
+import com.github.httpmock.dto.ConfigurationDto;
 import com.github.httpmock.dto.RequestDto;
 
-public class RequestCounter {
+public class RequestCounter implements MockReplayListener {
 
 	private Map<RequestDto, Integer> counts;
 
@@ -29,4 +31,8 @@ public class RequestCounter {
 		return num;
 	}
 
+	@Override
+	public void onReplay(ConfigurationDto configuration) {
+		count(configuration.getRequest());
+	}
 }

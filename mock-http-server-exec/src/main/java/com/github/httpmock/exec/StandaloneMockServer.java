@@ -62,8 +62,12 @@ public class StandaloneMockServer implements MockServer {
 	}
 
 	public boolean isServerStarted() {
-		RestAssuredConfig config = RestAssured.config().httpClient(RestAssuredConfig.config().getHttpClientConfig().setParam("CONNECTION_MANAGER_TIMEOUT", 1000));
-		return RestAssured.given().config(config).baseUri(getBaseUri()).basePath("/mockserver").get("/").statusCode() == 200;
+		try {
+			RestAssuredConfig config = RestAssured.config().httpClient(RestAssuredConfig.config().getHttpClientConfig().setParam("CONNECTION_MANAGER_TIMEOUT", 1000));
+			return RestAssured.given().config(config).baseUri(getBaseUri()).basePath("/mockserver").get("/").statusCode() == 200;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override
