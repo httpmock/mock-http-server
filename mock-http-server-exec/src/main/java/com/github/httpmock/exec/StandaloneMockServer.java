@@ -1,9 +1,6 @@
 package com.github.httpmock.exec;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 import com.github.httpmock.MockServer;
@@ -18,6 +15,7 @@ public class StandaloneMockServer implements MockServer {
 	private Configuration config;
 	private ApplicationServerRunnerFactory runnerFactory;
 	private ApplicationServerRunner runner;
+	private Future<Void> runnerFuture;
 
 	public StandaloneMockServer(Configuration config) {
 		this(config, new ApplicationServerRunnerFactory());
@@ -38,13 +36,7 @@ public class StandaloneMockServer implements MockServer {
 	void startServerInBackground() {
 		runner = runnerFactory.create(config);
 		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
-		try {
-			singleThreadExecutor.submit(runner).get();
-		} catch (InterruptedException e) {
-			throw new ServerException(e);
-		} catch (ExecutionException e) {
-			throw new ServerException(e);
-		}
+		runnerFuture = singleThreadExecutor.submit(runner);
 	}
 
 	public void waitUntilServerIsStarted() {
@@ -74,8 +66,10 @@ public class StandaloneMockServer implements MockServer {
 	public void stop() {
 		try {
 			runner.stopServer();
+			runnerFuture.get(5, TimeUnit.SECONDS);
 		} catch (Exception e) {
 		}
+		runnerFuture.cancel(true);
 	}
 
 	@Override

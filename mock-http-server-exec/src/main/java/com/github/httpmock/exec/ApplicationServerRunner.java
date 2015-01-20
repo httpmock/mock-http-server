@@ -200,14 +200,14 @@ public class ApplicationServerRunner implements Callable<Void> {
 	void startServer() throws InterruptedException {
 		setupSystemProperties();
 		server = createRemoteServer();
-		server.setPortStartup(getHttpPort());
+		server.setPortStartup(config.getHttpPort());
 		setupClassPath(server);
 		server.start(getJvmArgs(), "start", true);
 		server.getServer().waitFor();
 	}
 
 	RemoteServer createRemoteServer() {
-		return new RemoteServer();
+		return new RemoteServer(60, true);
 	}
 
 	private List<String> getJvmArgs() {
@@ -231,7 +231,7 @@ public class ApplicationServerRunner implements Callable<Void> {
 	private void setupSystemProperties() {
 		File distribOutput = getDistrubtionDirectory();
 		System.setProperty("openejb.home", distribOutput.getAbsolutePath());
-		System.setProperty("server.shutdown.port", getStopPort().toString());
+		System.setProperty("server.shutdown.port", Integer.toString(config.getStopPort()));
 		System.setProperty("server.shutdown.command", properties.getProperty("shutdownCommand"));
 	}
 
@@ -257,6 +257,6 @@ public class ApplicationServerRunner implements Callable<Void> {
 	}
 
 	public void stopServer() throws Exception {
-		server.forceStop();
+		server.stop();
 	}
 }
