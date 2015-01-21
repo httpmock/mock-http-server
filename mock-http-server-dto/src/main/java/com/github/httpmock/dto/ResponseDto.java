@@ -51,8 +51,4 @@ public class ResponseDto {
 		return HashCodeBuilder.reflectionHashCode(this);
 	}
 
-	public String getContentType() {
-		return headers.get("Content-Type");
-	}
-
 }

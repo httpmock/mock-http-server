@@ -246,7 +246,7 @@ public class MockIT {
 	private void validateResponse(Response response, ResponseDto responseConfig) {
 		response.then().statusCode(responseConfig.getStatusCode())
 		//
-		.and().contentType(is(responseConfig.getContentType()))
+		.and().contentType(is(responseConfig.getHeaders().get("Content-Type")))
 		//
 		.and().body(is(new String(Base64.decodeBase64(responseConfig.getPayload()))));
 	}

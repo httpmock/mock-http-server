@@ -29,6 +29,6 @@ public class ResponseDtoTest {
 		Map<String, String> headers = emptyMap();
 		headers.put("Content-Type", "some/type");
 		responseDto.setHeaders(headers);
-		assertThat(responseDto.getContentType(), is("some/type"));
+		assertThat(responseDto.getHeaders().get("Content-Type"), is("some/type"));
 	}
 }
