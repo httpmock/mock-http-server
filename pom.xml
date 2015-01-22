@@ -3,7 +3,7 @@
 
 	<groupId>com.github.httpmock</groupId>
 	<artifactId>mock-http-server</artifactId>
-	<version>1.1.9</version>
+	<version>1.1.10-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>mock-http-server</name>
@@ -18,7 +18,7 @@
 	<scm>
 		<url>https://github.com/httpmock/mock-http-server</url>
 		<connection>scm:git:git@github.com:httpmock/mock-http-server.git</connection>
-		<tag>mock-http-server-1.1.9</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<developers>
 		<developer>
