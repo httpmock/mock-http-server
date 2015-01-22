@@ -1,21 +1,17 @@
 package com.github.httpmock;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import com.github.httpmock.dto.ConfigurationDto;
+import com.github.httpmock.dto.RequestDto;
 import com.github.httpmock.dto.ResponseDto;
-import org.junit.Before;
+import com.github.httpmock.request.RequestCounter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.github.httpmock.dto.RequestDto;
-import com.github.httpmock.request.RequestCounter;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockInstanceTest {

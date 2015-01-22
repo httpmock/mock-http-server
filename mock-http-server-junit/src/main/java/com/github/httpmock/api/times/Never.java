@@ -1,10 +1,9 @@
 package com.github.httpmock.api.times;
 
-public class Never extends Times {
+public class Never extends Exactly {
 
-	@Override
-	public boolean matches(int num) {
-		return num == 0;
+	public Never() {
+		super(0);
 	}
 
 	@Override

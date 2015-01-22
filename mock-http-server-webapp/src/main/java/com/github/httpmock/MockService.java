@@ -1,11 +1,10 @@
 package com.github.httpmock;
 
-import static com.github.httpmock.util.CollectionUtil.emptyMap;
-
+import javax.ejb.Singleton;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.ejb.Singleton;
+import static com.github.httpmock.util.CollectionUtil.emptyMap;
 
 @Singleton
 public class MockService {

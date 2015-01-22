@@ -1,11 +1,11 @@
 package com.github.httpmock.request;
 
-import static com.github.httpmock.util.CollectionUtil.emptyMap;
+import com.github.httpmock.util.KeyValuePair;
+import com.github.httpmock.util.UrlNormalizer;
 
 import java.util.Map;
 
-import com.github.httpmock.util.KeyValuePair;
-import com.github.httpmock.util.UrlNormalizer;
+import static com.github.httpmock.util.CollectionUtil.emptyMap;
 
 public class Url {
 

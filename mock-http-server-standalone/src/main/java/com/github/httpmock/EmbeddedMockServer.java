@@ -1,8 +1,8 @@
 package com.github.httpmock;
 
-import static com.github.httpmock.exec.PortUtil.getRandomPorts;
-
 import java.util.List;
+
+import static com.github.httpmock.exec.PortUtil.getRandomPorts;
 
 public class EmbeddedMockServer implements MockServer {
 	private ApplicationServerStandalone applicationServer;

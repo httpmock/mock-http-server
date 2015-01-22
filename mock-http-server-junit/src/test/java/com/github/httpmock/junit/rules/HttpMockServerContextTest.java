@@ -1,14 +1,8 @@
 package com.github.httpmock.junit.rules;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-
+import com.github.httpmock.MockServer;
+import com.github.httpmock.ServerException;
+import com.github.httpmock.api.MockService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,10 +10,10 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.github.httpmock.MockServer;
-import com.github.httpmock.ServerException;
-import com.github.httpmock.api.MockService;
-import com.github.httpmock.junit.rules.HttpMockServerContext;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HttpMockServerContextTest {

@@ -1,14 +1,13 @@
 package com.github.httpmock.exec;
 
-import static com.github.httpmock.util.CollectionUtil.emptyList;
+import com.github.httpmock.ServerException;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-
-import com.github.httpmock.ServerException;
+import static com.github.httpmock.util.CollectionUtil.emptyList;
 
 public abstract class PortUtil {
 

@@ -1,12 +1,11 @@
 package com.github.httpmock.builder;
 
-import static com.github.httpmock.util.CollectionUtil.emptyMap;
+import com.github.httpmock.dto.ResponseDto;
+import org.apache.commons.codec.binary.Base64;
 
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
-
-import com.github.httpmock.dto.ResponseDto;
+import static com.github.httpmock.util.CollectionUtil.emptyMap;
 
 public class ResponseBuilder {
 	private String payload;

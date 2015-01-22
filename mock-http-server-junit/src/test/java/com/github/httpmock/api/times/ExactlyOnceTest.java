@@ -1,17 +1,14 @@
 package com.github.httpmock.api.times;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
 import org.junit.Test;
 
-import com.github.httpmock.api.times.ExcatlyOnce;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
-public class ExcatlyOnceTest {
+public class ExactlyOnceTest {
 	@Test
 	public void matches() throws Exception {
-		ExcatlyOnce once = new ExcatlyOnce();
+		ExactlyOnce once = new ExactlyOnce();
 		assertThat(once.matches(1), is(true));
 		assertThat(once.matches(0), is(false));
 		assertThat(once.matches(2), is(false));
@@ -19,13 +16,14 @@ public class ExcatlyOnceTest {
 	}
 
 	@Test
-	public void descriptoin() throws Exception {
-		ExcatlyOnce once = new ExcatlyOnce();
+	public void description() throws Exception {
+		ExactlyOnce once = new ExactlyOnce();
 		assertThat(once.getFailedDescription(), is("once"));
 	}
 
 	@Test
 	public void factory() throws Exception {
-		assertThat(ExcatlyOnce.once(), is(notNullValue()));
+		assertThat(ExactlyOnce.once(), is(notNullValue()));
+		assertThat(ExactlyOnce.once(), is(instanceOf(ExactlyOnce.class)));
 	}
 }

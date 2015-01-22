@@ -1,11 +1,9 @@
 package com.github.httpmock.dto;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import org.junit.Test;
 
-import com.github.httpmock.dto.MockDto;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class MockDtoTest {
 	@Test

@@ -1,21 +1,20 @@
 package com.github.httpmock;
 
-import static com.github.httpmock.builder.RequestBuilder.request;
-import static com.github.httpmock.builder.ResponseBuilder.response;
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-
-import com.github.httpmock.api.times.ExcatlyOnce;
+import com.github.httpmock.api.times.ExactlyOnce;
 import com.github.httpmock.dto.RequestDto;
 import com.github.httpmock.dto.ResponseDto;
 import com.github.httpmock.junit.rules.HttpMock;
 import com.github.httpmock.junit.rules.HttpMockServerContext;
 import com.jayway.restassured.response.Response;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+
+import static com.github.httpmock.builder.RequestBuilder.request;
+import static com.github.httpmock.builder.ResponseBuilder.response;
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class ExampleIT {
 
@@ -35,7 +34,7 @@ public class ExampleIT {
 
 		assertThat(mockResponse.getBody().asString(), is("data"));
 		assertThat(mockResponse.getContentType(), is("text/plain"));
-		mock.verify(request, ExcatlyOnce.once());
+		mock.verify(request, ExactlyOnce.once());
 	}
 
 	private String getBaseUri() {

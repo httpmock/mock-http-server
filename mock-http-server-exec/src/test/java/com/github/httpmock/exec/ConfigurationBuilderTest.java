@@ -1,12 +1,9 @@
 package com.github.httpmock.exec;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import org.junit.Test;
 
-import com.github.httpmock.exec.Configuration;
-import com.github.httpmock.exec.ConfigurationBuilder;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class ConfigurationBuilderTest {
 	@Test

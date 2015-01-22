@@ -1,12 +1,12 @@
 package com.github.httpmock.request;
 
-import static com.github.httpmock.util.CollectionUtil.emptyMap;
-
-import java.util.Map;
-
 import com.github.httpmock.MockReplayListener;
 import com.github.httpmock.dto.ConfigurationDto;
 import com.github.httpmock.dto.RequestDto;
+
+import java.util.Map;
+
+import static com.github.httpmock.util.CollectionUtil.emptyMap;
 
 public class RequestCounter implements MockReplayListener {
 

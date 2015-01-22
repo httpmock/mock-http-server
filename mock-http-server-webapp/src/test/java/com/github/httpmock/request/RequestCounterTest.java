@@ -1,12 +1,11 @@
 package com.github.httpmock.request;
 
+import com.github.httpmock.dto.RequestDto;
+import org.junit.Test;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
-
-import org.junit.Test;
-
-import com.github.httpmock.dto.RequestDto;
 
 public class RequestCounterTest {
 	@Test

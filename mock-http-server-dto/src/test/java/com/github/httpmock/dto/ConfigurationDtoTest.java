@@ -1,14 +1,10 @@
 package com.github.httpmock.dto;
 
+import org.junit.Test;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
-
-import com.github.httpmock.dto.ConfigurationDto;
-import com.github.httpmock.dto.RequestDto;
-import com.github.httpmock.dto.ResponseDto;
 
 public class ConfigurationDtoTest {
 	@Test

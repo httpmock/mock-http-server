@@ -1,13 +1,12 @@
 package com.github.httpmock.builder;
 
+import com.github.httpmock.dto.RequestDto;
+import org.junit.Test;
+
 import static com.github.httpmock.builder.RequestBuilder.request;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-
-import org.junit.Test;
-
-import com.github.httpmock.dto.RequestDto;
 
 public class RequestBuilderTest {
 

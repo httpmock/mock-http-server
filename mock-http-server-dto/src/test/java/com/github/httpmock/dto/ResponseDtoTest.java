@@ -1,15 +1,13 @@
 package com.github.httpmock.dto;
 
+import org.junit.Test;
+
+import java.util.Map;
+
 import static com.github.httpmock.util.CollectionUtil.emptyMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-
-import java.util.Map;
-
-import org.junit.Test;
-
-import com.github.httpmock.dto.ResponseDto;
 
 public class ResponseDtoTest {
 	@Test

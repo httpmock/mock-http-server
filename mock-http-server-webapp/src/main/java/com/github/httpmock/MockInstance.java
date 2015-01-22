@@ -1,13 +1,13 @@
 package com.github.httpmock;
 
-import static com.github.httpmock.util.CollectionUtil.emptyList;
+import com.github.httpmock.dto.ConfigurationDto;
+import com.github.httpmock.dto.RequestDto;
+import com.github.httpmock.request.RequestCounter;
 
 import java.util.Arrays;
 import java.util.List;
 
-import com.github.httpmock.dto.ConfigurationDto;
-import com.github.httpmock.dto.RequestDto;
-import com.github.httpmock.request.RequestCounter;
+import static com.github.httpmock.util.CollectionUtil.emptyList;
 
 public class MockInstance implements MockReplayListener {
 	private String id;

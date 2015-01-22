@@ -1,13 +1,13 @@
 package com.github.httpmock.junit.rules;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import com.github.httpmock.api.MockService;
+import com.github.httpmock.api.MockVerifyException;
+import com.github.httpmock.api.Stubbing;
+import com.github.httpmock.api.times.ExactlyOnce;
+import com.github.httpmock.dto.ConfigurationDto;
+import com.github.httpmock.dto.RequestDto;
+import com.github.httpmock.dto.ResponseDto;
+import com.github.httpmock.dto.VerifyResponseDto;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,16 +17,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.github.httpmock.api.MockService;
-import com.github.httpmock.api.MockVerifyException;
-import com.github.httpmock.api.Stubbing;
-import com.github.httpmock.api.times.ExcatlyOnce;
-import com.github.httpmock.dto.ConfigurationDto;
-import com.github.httpmock.dto.RequestDto;
-import com.github.httpmock.dto.ResponseDto;
-import com.github.httpmock.dto.VerifyResponseDto;
-import com.github.httpmock.junit.rules.HttpMock;
-import com.github.httpmock.junit.rules.HttpMockServerContext;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HttpMockTest {
@@ -73,7 +68,7 @@ public class HttpMockTest {
 		when(mockService.verify(request)).thenReturn(numberOfTimes(0));
 
 		expectedException.expect(MockVerifyException.class);
-		httpMock.verify(request, ExcatlyOnce.once());
+		httpMock.verify(request, ExactlyOnce.once());
 	}
 
 	@Test
@@ -81,7 +76,7 @@ public class HttpMockTest {
 		RequestDto request = mock(RequestDto.class);
 		when(mockService.verify(request)).thenReturn(numberOfTimes(1));
 
-		httpMock.verify(request, ExcatlyOnce.once());
+		httpMock.verify(request, ExactlyOnce.once());
 	}
 
 	private VerifyResponseDto numberOfTimes(int times) {

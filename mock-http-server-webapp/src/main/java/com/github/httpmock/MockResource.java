@@ -1,37 +1,18 @@
 package com.github.httpmock;
 
-import static com.github.httpmock.builder.RequestBuilder.request;
-
-import java.util.List;
-import java.util.Set;
+import com.github.httpmock.dto.*;
+import com.github.httpmock.request.RequestMatcher;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.UriInfo;
+import java.util.List;
+import java.util.Set;
 
-import org.apache.commons.codec.binary.Base64;
-
-import com.github.httpmock.dto.ConfigurationDto;
-import com.github.httpmock.dto.MockDto;
-import com.github.httpmock.dto.RequestDto;
-import com.github.httpmock.dto.ResponseDto;
-import com.github.httpmock.dto.VerifyResponseDto;
-import com.github.httpmock.request.RequestMatcher;
+import static com.github.httpmock.builder.RequestBuilder.request;
 
 @Stateless
 @Path("/")

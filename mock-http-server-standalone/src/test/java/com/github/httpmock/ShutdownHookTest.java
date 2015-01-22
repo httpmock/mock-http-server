@@ -1,9 +1,5 @@
 package com.github.httpmock;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import org.apache.tomee.embedded.Container;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.github.httpmock.ShutdownHook;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ShutdownHookTest {

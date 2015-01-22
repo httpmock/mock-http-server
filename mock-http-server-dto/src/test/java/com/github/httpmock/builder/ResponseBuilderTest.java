@@ -1,16 +1,12 @@
 package com.github.httpmock.builder;
 
-import static com.github.httpmock.builder.ResponseBuilder.response;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.collection.IsMapContaining.hasEntry;
-
+import com.github.httpmock.dto.ResponseDto;
 import org.junit.Test;
 
-import com.github.httpmock.dto.ResponseDto;
+import static com.github.httpmock.builder.ResponseBuilder.response;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
 
 public class ResponseBuilderTest {
 	@Test

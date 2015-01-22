@@ -1,13 +1,11 @@
 package com.github.httpmock.request;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import org.hamcrest.collection.IsMapContaining;
 import org.junit.Test;
 
-import com.github.httpmock.request.Url;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 public class UrlTest {
 	@Test

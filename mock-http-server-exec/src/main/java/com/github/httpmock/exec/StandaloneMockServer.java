@@ -1,14 +1,13 @@
 package com.github.httpmock.exec;
 
-import java.util.concurrent.*;
-import java.util.logging.Logger;
-
 import com.github.httpmock.MockServer;
-import com.github.httpmock.ServerException;
 import com.jayway.awaitility.Awaitility;
 import com.jayway.awaitility.Duration;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.config.RestAssuredConfig;
+
+import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 public class StandaloneMockServer implements MockServer {
 

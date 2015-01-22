@@ -1,11 +1,11 @@
 package com.github.httpmock.dto;
 
-import static com.github.httpmock.util.CollectionUtil.emptyMap;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import static com.github.httpmock.util.CollectionUtil.emptyMap;
 
 public class ResponseDto {
 	private int statusCode;

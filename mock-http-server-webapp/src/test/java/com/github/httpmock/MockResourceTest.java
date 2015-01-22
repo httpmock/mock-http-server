@@ -1,21 +1,7 @@
 package com.github.httpmock;
 
-import static com.github.httpmock.builder.RequestBuilder.request;
-import static com.github.httpmock.builder.ResponseBuilder.response;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-
+import com.github.httpmock.dto.*;
+import com.github.httpmock.request.RequestMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,12 +9,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.github.httpmock.dto.ConfigurationDto;
-import com.github.httpmock.dto.MockDto;
-import com.github.httpmock.dto.RequestDto;
-import com.github.httpmock.dto.ResponseDto;
-import com.github.httpmock.dto.VerifyResponseDto;
-import com.github.httpmock.request.RequestMatcher;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+
+import static com.github.httpmock.builder.RequestBuilder.request;
+import static com.github.httpmock.builder.ResponseBuilder.response;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockResourceTest {

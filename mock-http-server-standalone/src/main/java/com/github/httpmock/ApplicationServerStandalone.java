@@ -1,13 +1,12 @@
 package com.github.httpmock;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.naming.NamingException;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
+
+import javax.naming.NamingException;
+import java.io.File;
+import java.io.IOException;
 
 public class ApplicationServerStandalone {
 	private static final int PORT_STOP_DEFAULT = 9099;

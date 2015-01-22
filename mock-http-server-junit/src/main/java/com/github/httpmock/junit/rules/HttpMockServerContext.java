@@ -1,9 +1,8 @@
 package com.github.httpmock.junit.rules;
 
-import org.junit.rules.ExternalResource;
-
 import com.github.httpmock.MockServer;
 import com.github.httpmock.api.MockService;
+import org.junit.rules.ExternalResource;
 
 public class HttpMockServerContext extends ExternalResource {
 	private static final String MOCK_SERVER_CONTEXT = "/mockserver";

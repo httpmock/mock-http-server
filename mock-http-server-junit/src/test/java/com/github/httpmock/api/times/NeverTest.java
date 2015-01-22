@@ -1,12 +1,9 @@
 package com.github.httpmock.api.times;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
 import org.junit.Test;
 
-import com.github.httpmock.api.times.Never;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class NeverTest {
 	@Test
@@ -27,6 +24,7 @@ public class NeverTest {
 	@Test
 	public void factory() throws Exception {
 		assertThat(Never.never(), is(notNullValue()));
+		assertThat(Never.never(), is(instanceOf(Never.class)));
 	}
 
 }

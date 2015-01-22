@@ -1,7 +1,5 @@
 package com.github.httpmock.junit.rules;
 
-import org.junit.rules.ExternalResource;
-
 import com.github.httpmock.api.MockService;
 import com.github.httpmock.api.MockVerifyException;
 import com.github.httpmock.api.Stubbing;
@@ -9,6 +7,7 @@ import com.github.httpmock.api.times.Times;
 import com.github.httpmock.dto.ConfigurationDto;
 import com.github.httpmock.dto.RequestDto;
 import com.github.httpmock.dto.VerifyResponseDto;
+import org.junit.rules.ExternalResource;
 
 public class HttpMock extends ExternalResource {
 

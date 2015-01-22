@@ -1,11 +1,11 @@
 package com.github.httpmock.exec;
 
+import com.github.httpmock.ServerException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
-
-import com.github.httpmock.ServerException;
 
 public class PropertiesReader {
 	private ClassLoader classLoader;

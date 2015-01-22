@@ -1,8 +1,8 @@
 package com.github.httpmock.api.times;
 
-public abstract class Times {
+public interface Times {
 
-	public abstract boolean matches(int num);
+	boolean matches(int num);
 
-	public abstract String getFailedDescription();
+	String getFailedDescription();
 }

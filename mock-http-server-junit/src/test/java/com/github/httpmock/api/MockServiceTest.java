@@ -1,12 +1,11 @@
 package com.github.httpmock.api;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import com.github.httpmock.dto.ConfigurationDto;
+import com.github.httpmock.dto.MockDto;
+import com.github.httpmock.dto.RequestDto;
+import com.github.httpmock.dto.VerifyResponseDto;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,13 +14,9 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.github.httpmock.api.MockService;
-import com.github.httpmock.dto.ConfigurationDto;
-import com.github.httpmock.dto.MockDto;
-import com.github.httpmock.dto.RequestDto;
-import com.github.httpmock.dto.VerifyResponseDto;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockServiceTest {

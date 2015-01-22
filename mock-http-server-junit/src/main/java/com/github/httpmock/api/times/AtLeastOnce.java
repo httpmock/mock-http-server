@@ -1,10 +1,9 @@
 package com.github.httpmock.api.times;
 
-public class AtLeastOnce extends Times {
+public class AtLeastOnce extends AtLeast {
 
-	@Override
-	public boolean matches(int num) {
-		return num >= 1;
+	public AtLeastOnce() {
+		super(1);
 	}
 
 	@Override
@@ -12,8 +11,8 @@ public class AtLeastOnce extends Times {
 		return "at least once";
 	}
 
-	public static ExcatlyOnce atLeastOnce() {
-		return new ExcatlyOnce();
+	public static AtLeastOnce atLeastOnce() {
+		return new AtLeastOnce();
 	}
 
 }

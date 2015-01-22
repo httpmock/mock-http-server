@@ -1,8 +1,8 @@
 package com.github.httpmock.request;
 
-import javax.ejb.Stateless;
-
 import com.github.httpmock.dto.RequestDto;
+
+import javax.ejb.Stateless;
 
 @Stateless
 public class RequestMatcher {
