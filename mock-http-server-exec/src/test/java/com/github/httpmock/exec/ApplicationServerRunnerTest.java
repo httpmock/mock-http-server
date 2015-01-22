@@ -4,9 +4,7 @@ import org.apache.openejb.config.RemoteServer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -171,18 +169,6 @@ public class ApplicationServerRunnerTest {
 		return nodeList;
 	}
 
-	@Test
-	public void extractDistributionFolder() throws Exception {
-		properties.put("timestamp", "0");
-		properties.put(ApplicationServerRunner.PROPERTY_DISTRIBUTION, ".distribution");
-		doNothing().when(runner).unzip(any(File.class), any(String.class));
-		doNothing().when(runner).writeTimestamp();
-
-		runner.createDistributionFolderIfNecessary();
-
-		verify(runner).unzip(new File("target/test/resources/tomee"), ".distribution");
-	}
-
 	private Properties properties() {
 		Properties properties = new Properties();
 		properties.put(ApplicationServerRunner.PROPERTY_WORKING_DIR, "target/test/resources/tomee");
@@ -204,5 +190,19 @@ public class ApplicationServerRunnerTest {
 		assertThat(config.getHttpPort(), is(1516));
 		assertThat(config.getStopPort(), is(1744));
 		assertThat(config.getAjpPort(), is(1777));
+	}
+
+	@Test
+	public void call() throws Exception {
+		doNothing().when(runner).createDistributionFolderIfNecessary();
+		doNothing().when(runner).configureServerConfig();
+		doNothing().when(runner).startServer();
+
+		runner.call();
+
+		InOrder inOrder = Mockito.inOrder(runner);
+		inOrder.verify(runner).createDistributionFolderIfNecessary();
+		inOrder.verify(runner).configureServerConfig();
+		inOrder.verify(runner).startServer();
 	}
 }

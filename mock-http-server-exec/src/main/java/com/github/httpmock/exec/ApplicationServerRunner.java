@@ -1,9 +1,6 @@
 package com.github.httpmock.exec;
 
 import org.apache.openejb.config.RemoteServer;
-import org.apache.openejb.loader.Files;
-import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.Zips;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -21,7 +18,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +27,6 @@ import java.util.concurrent.Callable;
 public class ApplicationServerRunner implements Callable<Void> {
 	private static final String PROPERTY_ADDITIONAL_SYSTEM_PROPERTIES = "additionalSystemProperties";
 	public static final String PROPERTY_WORKING_DIR = "workingDir";
-	public static final String PROPERTY_DISTRIBUTION = "distribution";
 	private static final String CONFIGURATION_PROPERTIES = "configuration.properties";
 
 	private static final int PORT_STOP_DEFAULT = 9099;
@@ -43,15 +38,18 @@ public class ApplicationServerRunner implements Callable<Void> {
 	private Configuration config;
 	private Properties properties;
 	private RemoteServer server;
+	private ApplicationServerDistribution distribution;
 
 	public ApplicationServerRunner(Configuration config, Properties properties) {
 		this.config = config;
 		this.properties = properties;
+		this.distribution = new ApplicationServerDistribution(getDistributionDirectory(), properties);
 	}
 
 	public ApplicationServerRunner(Configuration config) {
 		this.config = config;
 		this.properties = readProperties();
+		this.distribution = new ApplicationServerDistribution(getDistributionDirectory(), properties);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -81,7 +79,7 @@ public class ApplicationServerRunner implements Callable<Void> {
 	}
 
 	void configureServerConfig() throws SAXException, IOException, ParserConfigurationException, TransformerException, XPathExpressionException {
-		File serverXml = new File(getDistrubtionDirectory(), "conf/server.xml");
+		File serverXml = new File(getDistributionDirectory(), "conf/server.xml");
 		Document doc = getServerXmlDocument(serverXml);
 
 		configureHttpPort(doc, Integer.toString(config.getHttpPort()));
@@ -139,56 +137,10 @@ public class ApplicationServerRunner implements Callable<Void> {
 	}
 
 	void createDistributionFolderIfNecessary() throws IOException {
-		File distribOutput = getDistrubtionDirectory();
-		File timestampFile = getTimestampFile();
-		boolean forceDelete = Boolean.getBoolean("tomee.runner.force-delete");
-		if (forceDelete || !timestampFile.exists() || isUpdateRequired()) {
-			if (forceDelete || timestampFile.exists()) {
-				System.out.println("Deleting " + distribOutput.getAbsolutePath());
-				Files.delete(distribOutput);
-			}
-			extractApplicationServer(distribOutput);
-			writeTimestamp();
-		}
+		distribution.updateIfNecessary();
 	}
 
-	void writeTimestamp() throws IOException {
-		File timestampFile = getTimestampFile();
-		String currentTime = Long.toString(System.currentTimeMillis());
-		IO.writeString(timestampFile, properties.getProperty("timestamp", currentTime));
-	}
-
-	private boolean isUpdateRequired() throws IOException {
-		File timestampFile = getTimestampFile();
-		return getTimestampFromFile(timestampFile) < getTimestampFromConfig();
-	}
-
-	private long getTimestampFromConfig() {
-		return Long.parseLong(properties.getProperty("timestamp"));
-	}
-
-	private long getTimestampFromFile(File timestampFile) throws IOException {
-		return Long.parseLong(IO.slurp(timestampFile).replace(System.getProperty("line.separator"), ""));
-	}
-
-	private File getTimestampFile() {
-		File distribOutput = getDistrubtionDirectory();
-		return new File(distribOutput, "timestamp.txt");
-	}
-
-	private void extractApplicationServer(File distribOutput) throws IOException {
-		String distrib = properties.getProperty(PROPERTY_DISTRIBUTION);
-		System.out.println("Extracting tomee to " + distribOutput.getAbsolutePath());
-		unzip(distribOutput, distrib);
-	}
-
-	void unzip(File distribOutput, String distrib) throws IOException {
-		ClassLoader contextClassLoader = getClassLoader();
-		InputStream distribIs = contextClassLoader.getResourceAsStream(distrib);
-		Zips.unzip(distribIs, distribOutput, false);
-	}
-
-	private File getDistrubtionDirectory() {
+	private File getDistributionDirectory() {
 		return new File(properties.getProperty(PROPERTY_WORKING_DIR));
 	}
 
@@ -224,20 +176,20 @@ public class ApplicationServerRunner implements Callable<Void> {
 	}
 
 	private void setupSystemProperties() {
-		File distribOutput = getDistrubtionDirectory();
+		File distribOutput = getDistributionDirectory();
 		System.setProperty("openejb.home", distribOutput.getAbsolutePath());
 		System.setProperty("server.shutdown.port", Integer.toString(config.getStopPort()));
 		System.setProperty("server.shutdown.command", properties.getProperty("shutdownCommand"));
 	}
 
-	static Integer getHttpPort() {
+	private static Integer getHttpPort() {
 		int httpPort = PORT_HTTP_DEFAULT;
 		if (System.getenv(ENV_HTTP_PORT) != null)
 			httpPort = Integer.parseInt(System.getenv(ENV_HTTP_PORT));
 		return httpPort;
 	}
 
-	static Integer getStopPort() {
+	private static Integer getStopPort() {
 		int stopPort = PORT_STOP_DEFAULT;
 		if (System.getenv(ENV_STOP_PORT) != null)
 			stopPort = Integer.parseInt(System.getenv(ENV_STOP_PORT));
