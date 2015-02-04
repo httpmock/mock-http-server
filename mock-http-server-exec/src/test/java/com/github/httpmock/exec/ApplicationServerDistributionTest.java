@@ -36,8 +36,7 @@ public class ApplicationServerDistributionTest {
 	}
 
 	private Properties properties() {
-		Properties properties = new Properties();
-		return properties;
+		return new Properties();
 	}
 
 	@Test

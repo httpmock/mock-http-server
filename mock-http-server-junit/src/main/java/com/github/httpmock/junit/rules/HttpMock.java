@@ -1,13 +1,15 @@
 package com.github.httpmock.junit.rules;
 
+import org.junit.rules.ExternalResource;
+
 import com.github.httpmock.api.MockService;
 import com.github.httpmock.api.MockVerifyException;
 import com.github.httpmock.api.Stubbing;
 import com.github.httpmock.api.times.Times;
+import com.github.httpmock.builder.RequestBuilder;
 import com.github.httpmock.dto.ConfigurationDto;
 import com.github.httpmock.dto.RequestDto;
 import com.github.httpmock.dto.VerifyResponseDto;
-import org.junit.rules.ExternalResource;
 
 public class HttpMock extends ExternalResource {
 
@@ -43,6 +45,10 @@ public class HttpMock extends ExternalResource {
 		return new Stubbing(mockService, request);
 	}
 
+	public Stubbing when(RequestBuilder requestBuilder) {
+		return when(requestBuilder.build());
+	}
+
 	public void configure(ConfigurationDto config) {
 		mockService.configure(config);
 	}
@@ -54,8 +60,7 @@ public class HttpMock extends ExternalResource {
 	public void verify(RequestDto request, Times times) {
 		int numberOfCalls = getNumberOfCalls(request);
 		if (!times.matches(numberOfCalls)) {
-			throw new MockVerifyException(String.format(VERIFICATION_FAILED,
-					numberOfCalls, times.getFailedDescription()));
+			throw new MockVerifyException(String.format(VERIFICATION_FAILED, numberOfCalls, times.getFailedDescription()));
 		}
 	}
 

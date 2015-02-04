@@ -1,27 +1,33 @@
 package com.github.httpmock.junit.rules;
 
-import com.github.httpmock.api.MockService;
-import com.github.httpmock.api.MockVerifyException;
-import com.github.httpmock.api.Stubbing;
-import com.github.httpmock.api.times.ExactlyOnce;
-import com.github.httpmock.dto.ConfigurationDto;
-import com.github.httpmock.dto.RequestDto;
-import com.github.httpmock.dto.ResponseDto;
-import com.github.httpmock.dto.VerifyResponseDto;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import com.github.httpmock.api.MockService;
+import com.github.httpmock.api.MockVerifyException;
+import com.github.httpmock.api.Stubbing;
+import com.github.httpmock.api.times.ExactlyOnce;
+import com.github.httpmock.builder.RequestBuilder;
+import com.github.httpmock.builder.ResponseBuilder;
+import com.github.httpmock.dto.ConfigurationDto;
+import com.github.httpmock.dto.RequestDto;
+import com.github.httpmock.dto.ResponseDto;
+import com.github.httpmock.dto.VerifyResponseDto;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HttpMockTest {
@@ -100,6 +106,19 @@ public class HttpMockTest {
 		httpMock.when(request).thenRespond(response);
 
 		verify(mockService).configure(any(ConfigurationDto.class));
+	}
+
+	@Test
+	public void stubbingUsingBuilders() throws Exception {
+		RequestBuilder requestBuilder = RequestBuilder.request();
+		ResponseBuilder responseBuilder = ResponseBuilder.response();
+		httpMock.when(requestBuilder).then(responseBuilder);
+
+		ArgumentCaptor<ConfigurationDto> configCaptor = ArgumentCaptor.forClass(ConfigurationDto.class);
+		verify(mockService).configure(configCaptor.capture());
+		ConfigurationDto config = configCaptor.getValue();
+		assertThat(config.getRequest(), is(requestBuilder.build()));
+		assertThat(config.getResponse(), is(responseBuilder.build()));
 	}
 
 	@Test
