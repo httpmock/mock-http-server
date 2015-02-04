@@ -30,7 +30,7 @@ import com.github.httpmock.dto.ResponseDto;
 import com.github.httpmock.dto.VerifyResponseDto;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HttpMockTest {
+public class HttpMockRuleTest {
 
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
@@ -42,7 +42,7 @@ public class HttpMockTest {
 	private MockService mockService;
 
 	@InjectMocks
-	private HttpMock httpMock = new HttpMock(mockServer);
+	private HttpMockRule httpMockRule = new HttpMockRule(mockServer);
 
 	@Before
 	public void setup() {
@@ -52,20 +52,20 @@ public class HttpMockTest {
 	@Test
 	public void configure() throws Exception {
 		ConfigurationDto config = mock(ConfigurationDto.class);
-		httpMock.configure(config);
+		httpMockRule.configure(config);
 		verify(mockService).configure(config);
 	}
 
 	@Test
 	public void delete() throws Exception {
-		httpMock.delete();
+		httpMockRule.delete();
 		verify(mockService).delete();
 	}
 
 	@Test
 	public void requestUrl() throws Exception {
 		when(mockService.getRequestUrl()).thenReturn("some url");
-		assertThat(httpMock.getRequestUrl(), is("some url"));
+		assertThat(httpMockRule.getRequestUrl(), is("some url"));
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class HttpMockTest {
 		when(mockService.verify(request)).thenReturn(numberOfTimes(0));
 
 		expectedException.expect(MockVerifyException.class);
-		httpMock.verify(request, ExactlyOnce.once());
+		httpMockRule.verify(request, ExactlyOnce.once());
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class HttpMockTest {
 		RequestDto request = mock(RequestDto.class);
 		when(mockService.verify(request)).thenReturn(numberOfTimes(1));
 
-		httpMock.verify(request, ExactlyOnce.once());
+		httpMockRule.verify(request, ExactlyOnce.once());
 	}
 
 	private VerifyResponseDto numberOfTimes(int times) {
@@ -94,7 +94,7 @@ public class HttpMockTest {
 	@Test
 	public void startStubbing() throws Exception {
 		RequestDto request = mock(RequestDto.class);
-		Stubbing stubbing = httpMock.when(request);
+		Stubbing stubbing = httpMockRule.when(request);
 		assertThat(stubbing, is(notNullValue()));
 	}
 
@@ -103,7 +103,7 @@ public class HttpMockTest {
 		RequestDto request = mock(RequestDto.class);
 		ResponseDto response = mock(ResponseDto.class);
 
-		httpMock.when(request).thenRespond(response);
+		httpMockRule.when(request).thenRespond(response);
 
 		verify(mockService).configure(any(ConfigurationDto.class));
 	}
@@ -112,7 +112,7 @@ public class HttpMockTest {
 	public void stubbingUsingBuilders() throws Exception {
 		RequestBuilder requestBuilder = RequestBuilder.request();
 		ResponseBuilder responseBuilder = ResponseBuilder.response();
-		httpMock.when(requestBuilder).then(responseBuilder);
+		httpMockRule.when(requestBuilder).then(responseBuilder);
 
 		ArgumentCaptor<ConfigurationDto> configCaptor = ArgumentCaptor.forClass(ConfigurationDto.class);
 		verify(mockService).configure(configCaptor.capture());
@@ -123,13 +123,13 @@ public class HttpMockTest {
 
 	@Test
 	public void createNewMockBeforeTest() throws Throwable {
-		httpMock.before();
+		httpMockRule.before();
 		verify(mockService).create();
 	}
 
 	@Test
 	public void deleteMockAfterTest() throws Throwable {
-		httpMock.after();
+		httpMockRule.after();
 		verify(mockService).delete();
 	}
 }
